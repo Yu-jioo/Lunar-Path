@@ -435,6 +435,7 @@
             border-color: var(--celestial-blue);
             box-shadow: 0 0 10px var(--moon-glow);
         }
+
         .task-input-container {
             display: flex;
             flex-direction: column;
@@ -469,8 +470,7 @@
             border-color: var(--celestial-blue);
             box-shadow: 0 0 15px var(--moon-glow);
         }
-
-        .task-list {
+                .task-list {
             list-style: none;
         }
 
@@ -809,7 +809,8 @@
                 gap: 1.5rem;
                 align-items: flex-start;
             }
-                        .energy-system {
+            
+            .energy-system {
                 width: 100%;
                 justify-content: space-between;
             }
@@ -984,13 +985,13 @@
             </main>
 
             <footer>
-                <p class="footer-text">All rights reserved.© <span class="developer-credit">by Moaz In Dawn</span></p>
+                <p class="footer-text">All rights reserved © <span class="developer-credit">by Moaz In Dawn</span></p>
             </footer>
         </div>
     </div>
-
     <script>
-        // Star system
+    // ... (الكود السابق يبقى كما هو)
+      // Star system
         function createStars() {
             const container = document.getElementById('cosmic-bg');
             for (let i = 0; i < 200; i++) {
@@ -1291,88 +1292,6 @@
                             if (taskItem.classList.contains('completed')) {
                                 tasksCompleted--;
                                 updateStats();
-                                      }
-                    taskItem.remove();
-                    saveData();
-                });
-
-                taskItem.querySelector('.complete-btn').addEventListener('click', () => {
-                    const wasCompleted = taskItem.classList.contains('completed');
-                    taskItem.classList.toggle('completed');
-                    tasksCompleted = wasCompleted ? tasksCompleted - 1 : tasksCompleted + 1;
-                    updateStats();
-                    saveData();
-                });
-
-                taskList.appendChild(taskItem);
-                taskInput.value = '';
-                saveData();
-            }
-        }
-
-        // Save/load system
-        function generateUniqueCode() {
-            return 'LP-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-        }
-
-        function saveProgressWithCode() {
-            const code = generateUniqueCode();
-            document.getElementById('progress-code').value = code;
-            localStorage.setItem('lunarPathCode_' + code, JSON.stringify({
-                userName,
-                energy,
-                totalSessions,
-                tasksCompleted,
-                totalStudySeconds,
-                tasks: Array.from(document.querySelectorAll('.task-item')).map(task => ({
-                    text: task.querySelector('.task-text').textContent,
-                    completed: task.classList.contains('completed')
-                })),
-                workDuration: workDurationInput.value,
-                breakDuration: breakDurationInput.value
-            }));
-            alert('Progress saved with code: ' + code);
-        }
-
-        function loadProgressWithCode() {
-            const code = document.getElementById('progress-code').value.trim();
-            if (!code) return;
-            
-            const savedData = localStorage.getItem('lunarPathCode_' + code);
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                
-                taskList.innerHTML = '';
-                
-                userName = data.userName;
-                energy = data.energy || 0;
-                totalSessions = data.totalSessions || 0;
-                tasksCompleted = data.tasksCompleted || 0;
-                totalStudySeconds = data.totalStudySeconds || 0;
-                workDurationInput.value = data.workDuration || 25;
-                breakDurationInput.value = data.breakDuration || 5;
-                
-                userNameDisplay.textContent = userName;
-                updateStats();
-                updateRank();
-                updateStudyTime();
-                
-                if (data.tasks) {
-                    data.tasks.forEach(task => {
-                        const taskItem = document.createElement('li');
-                        taskItem.className = 'task-item' + (task.completed ? ' completed' : '');
-                        taskItem.innerHTML = `
-                            <span class="task-text">${task.text}</span>
-                            <div class="task-actions">
-                                <button class="task-btn complete-btn"><i class="fas fa-check"></i></button>
-                                <button class="task-btn delete-btn"><i class="fas fa-trash"></i></button>
-                            </div>
-                        `;
-                        
-                        taskItem.querySelector('.delete-btn').addEventListener('click', () => {
-                            if (taskItem.classList.contains('completed')) {
-                                tasksCompleted--;
-                                updateStats();
                             }
                             taskItem.remove();
                             saveData();
@@ -1469,39 +1388,39 @@
                 }
             }
         }
-
-        // Initialize app
-        function initApp() {
-            const savedData = localStorage.getItem('lunarPathData');
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                if (data.userName) {
-                    userName = data.userName;
-                    loginContainer.style.display = 'none';
-                    appContainer.style.display = 'block';
-                    createStars();
-                    loadData();
-                    return;
-                }
-            }
-            loginContainer.style.display = 'flex';
-        }
-
-        // Event listeners
-        loginBtn.addEventListener('click', () => {
-            userName = usernameInput.value.trim();
-            if (userName) {
+    // تعديل دالة initApp
+    function initApp() {
+        const savedData = localStorage.getItem('lunarPathData');
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            if (data.userName) {
+                userName = data.userName;
                 loginContainer.style.display = 'none';
-                appContainer.style.display = 'block';
+                appContainer.style.display = 'flex'; // تغيير من block إلى flex
                 createStars();
-                saveData();
                 loadData();
+                return;
             }
-        });
+        }
+        loginContainer.style.display = 'flex';
+    }
 
+    // تعديل الحدث الخاص بزر التسجيل
+    loginBtn.addEventListener('click', () => {
+        userName = usernameInput.value.trim();
+        if (userName) {
+            loginContainer.style.display = 'none';
+            appContainer.style.display = 'flex'; // تغيير هنا أيضًا
+            createStars();
+            saveData();
+            loadData();
+        }
+    });
+
+    
         startBtn.addEventListener('click', toggleTimer);
         pauseBtn.addEventListener('click', pauseTimer);
-        resetBtn.addEventListener('click', resetTimer);
+           resetBtn.addEventListener('click', resetTimer);
         addTaskBtn.addEventListener('click', addTask);
         taskInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') addTask();
