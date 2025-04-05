@@ -1,4 +1,4 @@
-     <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -58,6 +58,7 @@
             text-align: center;
             border: 1px solid var(--celestial-blue);
             box-shadow: 0 0 30px var(--moon-glow);
+            position: relative;
         }
 
         .login-title {
@@ -97,6 +98,16 @@
         .login-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 20px var(--star-dust);
+        }
+
+        .developer-credit-login {
+            position: absolute;
+            bottom: 1rem;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: rgba(226, 232, 240, 0.5);
+            font-size: 0.9rem;
         }
 
         .app-container {
@@ -183,6 +194,7 @@
             order: 1;
             width: 100%;
             justify-content: space-between;
+            cursor: pointer;
         }
 
         .energy-system::before {
@@ -258,8 +270,7 @@
             color: var(--moon-purple);
             font-size: 1.2rem;
         }
-
-        .main-content {
+                .main-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2.5rem;
@@ -294,7 +305,8 @@
             transform: translateY(-8px);
             box-shadow: 0 15px 40px rgba(56, 189, 248, 0.3);
         }
-                .card-header {
+
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -418,13 +430,11 @@
             font-size: 1rem;
             transition: all 0.3s ease;
         }
-
         .setting-input:focus {
             outline: none;
             border-color: var(--celestial-blue);
             box-shadow: 0 0 10px var(--moon-glow);
         }
-
         .task-input-container {
             display: flex;
             flex-direction: column;
@@ -514,8 +524,7 @@
             display: flex;
             gap: 0.8rem;
         }
-
-        .task-btn {
+               .task-btn {
             background: none;
             border: none;
             color: rgba(226, 232, 240, 0.5);
@@ -688,7 +697,98 @@
             color: transparent;
             margin-bottom: 1rem;
         }
-                @media (max-width: 1024px) {
+
+        .rank-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .rank-modal.show {
+            display: flex;
+        }
+
+        .rank-modal-content {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--celestial-blue);
+            box-shadow: 0 0 30px var(--moon-glow);
+            backdrop-filter: blur(10px);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .rank-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .rank-item {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 8px;
+            border-left: 3px solid transparent;
+        }
+
+        .rank-item.current {
+            border-left-color: var(--celestial-blue);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .code-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1002;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .code-modal-content {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--celestial-blue);
+            box-shadow: 0 0 30px var(--moon-glow);
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .code-input {
+            width: 100%;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--celestial-blue);
+            border-radius: 8px;
+            color: var(--starlight);
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        .code-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-direction: column;
+        }
+
+        @media (max-width: 1024px) {
             .main-content {
                 grid-template-columns: 1fr;
             }
@@ -709,13 +809,16 @@
                 gap: 1.5rem;
                 align-items: flex-start;
             }
-            
-            .energy-system {
+                        .energy-system {
                 width: 100%;
                 justify-content: space-between;
             }
             
             .timer-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+                        .timer-controls {
                 flex-direction: column;
                 align-items: center;
             }
@@ -749,12 +852,34 @@
     </style>
 </head>
 <body>
-    <!-- Login Page (shown only first time) -->
+    <!-- Login Page -->
     <div class="login-container" id="login-container">
         <div class="login-box">
             <h1 class="login-title">Lunar Path</h1>
             <input type="text" class="login-input" id="username-input" placeholder="Enter your name">
             <button class="login-btn" id="login-btn">Begin Journey</button>
+            <div class="developer-credit-login">Developed by Moaz In Dawn</div>
+        </div>
+    </div>
+
+    <!-- Rank Modal -->
+    <div class="rank-modal" id="rank-modal">
+        <div class="rank-modal-content">
+            <h3>Cultivation Ranks</h3>
+            <ul class="rank-list" id="rank-list"></ul>
+        </div>
+    </div>
+
+    <!-- Code Modal -->
+    <div class="code-modal" id="code-modal">
+        <div class="code-modal-content">
+            <h3>Save/Load Progress</h3>
+            <input type="text" class="code-input" id="progress-code" placeholder="Enter or generate code">
+            <div class="code-buttons">
+                <button class="btn btn-primary" id="generate-code-btn">Generate Code</button>
+                <button class="btn btn-secondary" id="load-code-btn">Load Progress</button>
+                <button class="btn btn-secondary" id="close-code-btn">Close</button>
+            </div>
         </div>
     </div>
 
@@ -777,6 +902,9 @@
                     <i class="fas fa-moon logo-icon"></i>
                     <h1 class="logo-text">Lunar Path</h1>
                 </div>
+                <button class="btn btn-secondary" id="save-load-btn">
+                    <i class="fas fa-cloud"></i> Save/Load
+                </button>
                 <div class="energy-system">
                     <span class="user-name" id="user-name-display"></span>
                     <div class="rank-badge" id="rank-badge">
@@ -877,7 +1005,7 @@
             }
         }
 
-        // Core variables
+               // Core variables
         let timeLeft = 25 * 60;
         let isRunning = false;
         let timerId = null;
@@ -926,6 +1054,9 @@
         const progressBar = document.getElementById('progress-bar');
         const rankUpAnimation = document.getElementById('rank-up-animation');
         const newRankDisplay = document.getElementById('new-rank-display');
+        const rankModal = document.getElementById('rank-modal');
+        const rankList = document.getElementById('rank-list');
+        const codeModal = document.getElementById('code-modal');
 
         // Update stats display
         function updateStats() {
@@ -944,9 +1075,7 @@
                     break;
                 }
             }
-
-            // Check if rank increased
-            if (newRankIndex > currentRankIndex) {
+                      if (newRankIndex > currentRankIndex) {
                 currentRankIndex = newRankIndex;
                 showRankUpAnimation(cultivationRanks[currentRankIndex].name);
             }
@@ -959,7 +1088,6 @@
                 <span>${currentRank.name}</span>
             `;
 
-            // Update progress bar
             const progress = nextRank ? 
                 ((energy - currentRank.threshold) / (nextRank.threshold - currentRank.threshold)) * 100 : 
                 100;
@@ -970,12 +1098,20 @@
         function showRankUpAnimation(rankName) {
             newRankDisplay.textContent = rankName;
             rankUpAnimation.classList.add('show');
-            
             setTimeout(() => {
                 rankUpAnimation.classList.remove('show');
             }, 3000);
         }
 
+        // Show rank modal
+        function showRanks() {
+            rankList.innerHTML = cultivationRanks.map((rank, index) => `
+                <li class="rank-item ${index === currentRankIndex ? 'current' : ''}">
+                    ${rank.name} - ${rank.threshold} Energy
+                </li>
+            `).join('');
+            rankModal.classList.add('show');
+        }
         // Timer functions
         function toggleTimer() {
             if (!isRunning) {
@@ -1054,7 +1190,7 @@
             totalHoursDisplay.textContent = `${hours}h ${minutes}m`;
         }
         
-        
+
         // Task system
         function addTask() {
             const taskText = taskInput.value.trim();
@@ -1070,13 +1206,18 @@
                 `;
 
                 taskItem.querySelector('.delete-btn').addEventListener('click', () => {
+                    if (taskItem.classList.contains('completed')) {
+                        tasksCompleted--;
+                        updateStats();
+                    }
                     taskItem.remove();
                     saveData();
                 });
 
                 taskItem.querySelector('.complete-btn').addEventListener('click', () => {
+                    const wasCompleted = taskItem.classList.contains('completed');
                     taskItem.classList.toggle('completed');
-                    tasksCompleted = taskItem.classList.contains('completed') ? tasksCompleted + 1 : tasksCompleted - 1;
+                    tasksCompleted = wasCompleted ? tasksCompleted - 1 : tasksCompleted + 1;
                     updateStats();
                     saveData();
                 });
@@ -1084,6 +1225,174 @@
                 taskList.appendChild(taskItem);
                 taskInput.value = '';
                 saveData();
+            }
+        }
+
+        // Save/load system
+        function generateUniqueCode() {
+            return 'LP-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        }
+
+        function saveProgressWithCode() {
+            const code = generateUniqueCode();
+            document.getElementById('progress-code').value = code;
+            localStorage.setItem('lunarPathCode_' + code, JSON.stringify({
+                userName,
+                energy,
+                totalSessions,
+                tasksCompleted,
+                totalStudySeconds,
+                tasks: Array.from(document.querySelectorAll('.task-item')).map(task => ({
+                    text: task.querySelector('.task-text').textContent,
+                    completed: task.classList.contains('completed')
+                })),
+                workDuration: workDurationInput.value,
+                breakDuration: breakDurationInput.value
+            }));
+            alert('Progress saved with code: ' + code);
+        }
+
+        function loadProgressWithCode() {
+            const code = document.getElementById('progress-code').value.trim();
+            if (!code) return;
+            
+            const savedData = localStorage.getItem('lunarPathCode_' + code);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                
+                taskList.innerHTML = '';
+                
+                userName = data.userName;
+                energy = data.energy || 0;
+                totalSessions = data.totalSessions || 0;
+                tasksCompleted = data.tasksCompleted || 0;
+                totalStudySeconds = data.totalStudySeconds || 0;
+                workDurationInput.value = data.workDuration || 25;
+                breakDurationInput.value = data.breakDuration || 5;
+                
+                userNameDisplay.textContent = userName;
+                updateStats();
+                updateRank();
+                updateStudyTime();
+                
+                if (data.tasks) {
+                    data.tasks.forEach(task => {
+                        const taskItem = document.createElement('li');
+                        taskItem.className = 'task-item' + (task.completed ? ' completed' : '');
+                        taskItem.innerHTML = `
+                            <span class="task-text">${task.text}</span>
+                            <div class="task-actions">
+                                <button class="task-btn complete-btn"><i class="fas fa-check"></i></button>
+                                <button class="task-btn delete-btn"><i class="fas fa-trash"></i></button>
+                            </div>
+                        `;
+                        
+                        taskItem.querySelector('.delete-btn').addEventListener('click', () => {
+                            if (taskItem.classList.contains('completed')) {
+                                tasksCompleted--;
+                                updateStats();
+                                      }
+                    taskItem.remove();
+                    saveData();
+                });
+
+                taskItem.querySelector('.complete-btn').addEventListener('click', () => {
+                    const wasCompleted = taskItem.classList.contains('completed');
+                    taskItem.classList.toggle('completed');
+                    tasksCompleted = wasCompleted ? tasksCompleted - 1 : tasksCompleted + 1;
+                    updateStats();
+                    saveData();
+                });
+
+                taskList.appendChild(taskItem);
+                taskInput.value = '';
+                saveData();
+            }
+        }
+
+        // Save/load system
+        function generateUniqueCode() {
+            return 'LP-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        }
+
+        function saveProgressWithCode() {
+            const code = generateUniqueCode();
+            document.getElementById('progress-code').value = code;
+            localStorage.setItem('lunarPathCode_' + code, JSON.stringify({
+                userName,
+                energy,
+                totalSessions,
+                tasksCompleted,
+                totalStudySeconds,
+                tasks: Array.from(document.querySelectorAll('.task-item')).map(task => ({
+                    text: task.querySelector('.task-text').textContent,
+                    completed: task.classList.contains('completed')
+                })),
+                workDuration: workDurationInput.value,
+                breakDuration: breakDurationInput.value
+            }));
+            alert('Progress saved with code: ' + code);
+        }
+
+        function loadProgressWithCode() {
+            const code = document.getElementById('progress-code').value.trim();
+            if (!code) return;
+            
+            const savedData = localStorage.getItem('lunarPathCode_' + code);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                
+                taskList.innerHTML = '';
+                
+                userName = data.userName;
+                energy = data.energy || 0;
+                totalSessions = data.totalSessions || 0;
+                tasksCompleted = data.tasksCompleted || 0;
+                totalStudySeconds = data.totalStudySeconds || 0;
+                workDurationInput.value = data.workDuration || 25;
+                breakDurationInput.value = data.breakDuration || 5;
+                
+                userNameDisplay.textContent = userName;
+                updateStats();
+                updateRank();
+                updateStudyTime();
+                
+                if (data.tasks) {
+                    data.tasks.forEach(task => {
+                        const taskItem = document.createElement('li');
+                        taskItem.className = 'task-item' + (task.completed ? ' completed' : '');
+                        taskItem.innerHTML = `
+                            <span class="task-text">${task.text}</span>
+                            <div class="task-actions">
+                                <button class="task-btn complete-btn"><i class="fas fa-check"></i></button>
+                                <button class="task-btn delete-btn"><i class="fas fa-trash"></i></button>
+                            </div>
+                        `;
+                        
+                        taskItem.querySelector('.delete-btn').addEventListener('click', () => {
+                            if (taskItem.classList.contains('completed')) {
+                                tasksCompleted--;
+                                updateStats();
+                            }
+                            taskItem.remove();
+                            saveData();
+                        });
+                        
+                        taskItem.querySelector('.complete-btn').addEventListener('click', () => {
+                            const wasCompleted = taskItem.classList.contains('completed');
+                            taskItem.classList.toggle('completed');
+                            tasksCompleted = wasCompleted ? tasksCompleted - 1 : tasksCompleted + 1;
+                            updateStats();
+                            saveData();
+                        });
+                        
+                        taskList.appendChild(taskItem);
+                    });
+                }
+                
+                alert('Progress loaded successfully!');
+            } else {
+                alert('Invalid code or no saved progress found');
             }
         }
 
@@ -1107,8 +1416,7 @@
                 workDuration: workDurationInput.value,
                 breakDuration: breakDurationInput.value
             };
-
-            localStorage.setItem('lunarPathData', JSON.stringify(data));
+                        localStorage.setItem('lunarPathData', JSON.stringify(data));
         }
 
         function loadData() {
@@ -1140,13 +1448,18 @@
                         `;
 
                         taskItem.querySelector('.delete-btn').addEventListener('click', () => {
+                            if (taskItem.classList.contains('completed')) {
+                                tasksCompleted--;
+                                updateStats();
+                            }
                             taskItem.remove();
                             saveData();
                         });
 
                         taskItem.querySelector('.complete-btn').addEventListener('click', () => {
+                            const wasCompleted = taskItem.classList.contains('completed');
                             taskItem.classList.toggle('completed');
-                            tasksCompleted = taskItem.classList.contains('completed') ? tasksCompleted + 1 : tasksCompleted - 1;
+                            tasksCompleted = wasCompleted ? tasksCompleted - 1 : tasksCompleted + 1;
                             updateStats();
                             saveData();
                         });
@@ -1192,6 +1505,29 @@
         addTaskBtn.addEventListener('click', addTask);
         taskInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') addTask();
+        });
+        
+            // Update timer when work duration changes
+        workDurationInput.addEventListener('input', () => {
+            if (!isRunning) {
+                timeLeft = workDurationInput.value * 60;
+                updateDisplay();
+            }
+        });
+
+        document.getElementById('rank-badge').addEventListener('click', showRanks);
+        document.getElementById('save-load-btn').addEventListener('click', () => {
+            codeModal.style.display = 'flex';
+        });
+        document.getElementById('generate-code-btn').addEventListener('click', saveProgressWithCode);
+        document.getElementById('load-code-btn').addEventListener('click', loadProgressWithCode);
+        document.getElementById('close-code-btn').addEventListener('click', () => {
+            codeModal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', (e) => {
+            if (e.target === rankModal) rankModal.classList.remove('show');
+            if (e.target === codeModal) codeModal.style.display = 'none';
         });
 
         // Start the app
