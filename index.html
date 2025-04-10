@@ -650,56 +650,98 @@
             line-height: 1.6;
         }
 
-        .rank-up-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(124, 58, 237, 0.2), transparent 70%);
-            z-index: 999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
+/* أنماط إشعار الترقية */
+.rank-up-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+    padding: 2rem 3rem;
+    border-radius: 15px;
+    border: 2px solid var(--celestial-blue);
+    box-shadow: 0 0 40px var(--star-dust),
+                0 0 60px var(--moon-glow);
+    text-align: center;
+    z-index: 2000;
+    opacity: 0;
+    backdrop-filter: blur(15px);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    max-width: 90%;
+}
 
-        .rank-up-animation.show {
-            opacity: 1;
-        }
+.rank-up-notification.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
 
-        .rank-up-content {
-            background: linear-gradient(145deg, var(--abyss-blue), var(--twilight-indigo));
-            padding: 2rem;
-            border-radius: 10px;
-            text-align: center;
-            border: 2px solid var(--celestial-blue);
-            box-shadow: 0 0 30px var(--moon-glow);
-            transform: scale(0.5);
-            transition: transform 0.5s ease;
-        }
+.rank-up-notification::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, var(--celestial-blue), var(--moon-purple));
+    z-index: -1;
+    border-radius: 15px;
+    animation: borderGlow 3s infinite;
+}
 
-        .rank-up-animation.show .rank-up-content {
-            transform: scale(1);
-        }
+.rank-up-title {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(90deg, var(--celestial-blue), var(--moon-purple));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 20px var(--moon-glow);
+}
 
-        .rank-up-title {
-            font-size: 2rem;
-            color: var(--celestial-blue);
-            margin-bottom: 1rem;
-            text-shadow: 0 0 10px var(--moon-glow);
-        }
+.rank-up-rank {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--starlight);
+    margin: 1rem 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
 
-        .rank-up-rank {
-            font-size: 3rem;
-            background: linear-gradient(135deg, var(--celestial-blue), var(--moon-purple));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 1rem;
-        }
+.rank-up-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, var(--celestial-blue), var(--moon-purple));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes borderGlow {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 0.3; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* تأثيرات الظهور والإختفاء */
+@keyframes particleExplosion {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(3); opacity: 0; }
+}
+
+.rank-up-notification.show::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, var(--celestial-blue) 10%, transparent 70%);
+    animation: particleExplosion 1s ease-out;
+    pointer-events: none;
+}
 
 .rank-modal {
     display: none;
@@ -1232,13 +1274,13 @@
         </div>
     </div>
 
-<!-- Rank Modal -->
-<div class="rank-modal" id="rank-modal">
-    <div class="rank-modal-content">
-        <h3>Cultivation Ranks</h3>
-        <ul class="rank-list" id="rank-list"></ul>
+    <!-- Rank Modal -->
+    <div class="rank-modal" id="rank-modal">
+        <div class="rank-modal-content">
+            <h3>Cultivation Ranks</h3>
+            <ul class="rank-list" id="rank-list"></ul>
+        </div>
     </div>
-</div>
 
 
     <!-- Main App -->
@@ -1615,18 +1657,22 @@ function updateRank() {
     progressBar.style.width = `${Math.min(100, progress)}%`;
 }
 
-// Show rank up animation
 function showRankUpAnimation(rankName) {
     const notification = document.createElement('div');
-    notification.className = 'notification energy-notification show';
+    notification.className = 'rank-up-notification show';
     notification.innerHTML = `
-        <div class="notification-title">
-            <i class="fas fa-trophy"></i>
-            Rank Up! New Rank: ${rankName}
-        </div>
+        <i class="fas fa-crown rank-up-icon"></i>
+        <div class="rank-up-title">Level Up</div>
+        <div class="rank-up-rank">${rankName}</div>
+        <div class="notification-message">Your rank has been raised in the sect.</div>
     `;
+    
     document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 500);
+    }, 3000);
 }
 
 // Exam Date Functions
