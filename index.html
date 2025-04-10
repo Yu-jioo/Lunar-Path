@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lunar Path</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
+        /* Previous CSS styles remain unchanged */
         :root {
             --void-black: #0a0a12;
             --abyss-blue: #0f172a;
@@ -892,9 +892,325 @@
     margin-bottom: 0;
     padding: 0;
 }
+
+
+        /* New Study Time Card Styles */
+        .study-time-card {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.6), rgba(30, 41, 59, 0.4));
+            border-radius: 10px;
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 10px 30px rgba(2, 6, 23, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+/* Exam Card Styles */
+.exam-card {
+    grid-column: span 2;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.6), rgba(30, 41, 59, 0.4));
+    border-radius: 10px;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.5);
+    transition: all 0.4s ease;
+}
+
+.exam-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.8rem;
+}
+
+.date-picker-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.exam-date-input {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--celestial-blue);
+    color: var(--starlight);
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    flex: 1;
+    min-width: 220px;
+    transition: all 0.3s ease;
+}
+
+.exam-date-input:focus {
+    outline: none;
+    box-shadow: 0 0 15px var(--moon-glow);
+}
+
+.days-remaining {
+    font-size: 2rem;
+    color: var(--celestial-blue);
+    text-align: center;
+    font-weight: 600;
+    text-shadow: 0 0 15px var(--moon-glow);
+    margin: 0.5rem 0;
+}
+
+.calendar-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.calendar-row {
+    display: flex;
+    gap: 0.2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 0.2rem;
+}
+
+.day-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 8px rgba(2, 6, 23, 0.3);
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--celestial-blue);
+    margin: 0 2px;
+}
+
+.day-circle.future {
+    border-color: rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 12px var(--moon-glow);
+}
+
+.day-circle.future:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 20px var(--moon-glow);
+}
+
+.day-circle.current {
+    background: linear-gradient(135deg, var(--celestial-blue), var(--moon-purple));
+    color: var(--void-black);
+    border: none;
+    transform: scale(1.3);
+    box-shadow: 0 0 25px var(--star-dust),
+                inset 0 0 10px rgba(255, 255, 255, 0.2);
+    animation: pulse 2s infinite;
+}
+
+.day-circle.past {
+    background: rgba(30, 41, 59, 0.6);
+    color: rgba(226, 232, 240, 0.3);
+    border: 1px solid rgba(56, 189, 248, 0.1);
+    box-shadow: none;
+    cursor: default;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1.3); }
+    50% { transform: scale(1.45); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .exam-card {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .day-circle {
+        width: 38px;
+        height: 38px;
+        font-size: 1.1rem;
+    }
+    
+    .days-remaining {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .day-circle {
+        width: 34px;
+        height: 34px;
+        font-size: 1rem;
+    }
+    
+    .exam-content {
+        padding: 1.5rem;
+    }
+    
+    .days-remaining {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .day-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+    
+    .exam-date-input {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+    
+    .days-remaining {
+        font-size: 1.3rem;
+    }
+}
+
+/* تعديلات للشاشات الصغيرة */
+@media (max-width: 768px) {
+    .day-circle {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .day-circle {
+        width: 24px;
+        height: 24px;
+        font-size: 0.7rem;
+    }
+}
+        
+        @media (max-width: 768px) {
+    /* بطاقات أصغر حجماً */
+    .card {
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+    }
+
+    /* ترتيب البطاقات عمودياً */
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    /* تعديل حجم الخطوط داخل البطاقات */
+    .card-title {
+        font-size: 1.2rem;
+    }
+
+    .card-icon {
+        font-size: 1.4rem;
+    }
+
+    /* تعديل حجم التايمر */
+    .timer-display {
+        font-size: 3rem;
+        margin: 1rem 0;
+    }
+
+    /* بطاقة الإحصائيات */
+    .stats-card {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    /* بطاقة الامتحانات */
+    .exam-card {
+        grid-column: span 1;
+    }
+
+    /* تقليل هامش البطاقات */
+    .container {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* تعديلات إضافية للشاشات الصغيرة */
+    .card {
+        padding: 1rem;
+    }
+
+    .timer-display {
+        font-size: 2.5rem;
+    }
+
+    .btn {
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* تقليل حجم أيقونات البطاقات */
+    .card-icon {
+        font-size: 1.2rem;
+    }
+
+    /* تقليل تباعد العناصر الداخلية */
+    .card-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+    }
+
+    /* تقليل حجم التقويم */
+    .day-circle {
+        width: 20px;
+        height: 20px;
+        font-size: 0.6rem;
+    }
+
+    /* تعديل حجم إدخال التاريخ */
+    .exam-date-input {
+        font-size: 0.9rem;
+        padding: 0.6rem;
+    }
+}
+
+@media (max-width: 360px) {
+    /* تعديلات نهائية للشاشات الضيقة */
+    .timer-display {
+        font-size: 2rem;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+    }
+
+    .task-text {
+        font-size: 0.9rem;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+    }
+
+    .days-remaining {
+        font-size: 1.4rem;
+    }
+}
+        
     </style>
 </head>
 <body>
+    <!-- Previous HTML remains unchanged -->
+
     <!-- Login Page -->
     <div class="login-container" id="login-container">
         <div class="login-box">
@@ -916,22 +1232,14 @@
         </div>
     </div>
 
+
     <!-- Main App -->
     <div class="app-container" id="app-container">
         <div class="cosmic-bg" id="cosmic-bg"></div>
         
-        <!-- Rank Up Animation -->
-        <div class="rank-up-animation" id="rank-up-animation">
-            <div class="rank-up-content">
-                <h2 class="rank-up-title">Rank Achieved!</h2>
-                <div class="rank-up-rank" id="new-rank-display"></div>
-                <p>Continue your cultivation journey</p>
-            </div>
-        </div>
-
         <div class="container">
             <header>
-                <div class="logo">
+                <!-- Header content remains unchanged -->                <div class="logo">
                     <i class="fas fa-moon logo-icon"></i>
                     <h1 class="logo-text">Lunar Path</h1>
                 </div>
@@ -949,7 +1257,7 @@
             </header>
 
             <main class="main-content">
-                <!-- Timer Card -->
+                <!-- Timer Card remains unchanged -->                <!-- Timer Card -->
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Study Timer</h2>
@@ -973,7 +1281,32 @@
                     </div>
                 </div>
 
-                <!-- Task Manager -->
+
+                <!-- New Study Time Card -->
+                <div class="card study-time-card">
+                    <i class="fas fa-clock hours-icon"></i>
+                    <div>
+                        <div class="stat-label">Total Study Time</div>
+                        <div class="stat-value" id="total-hours">0h 0m</div>
+                    </div>
+                </div>
+
+                <!-- Exam Date Card -->
+                <div class="card exam-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Exam Countdown</h2>
+                        <i class="fas fa-calendar-alt card-icon"></i>
+                    </div>
+                    <div class="exam-content">
+                        <div class="date-picker-container">
+                            <input type="date" class="exam-date-input" id="exam-date-input">
+                            <div id="days-remaining" class="days-remaining"></div>
+                        </div>
+                        <div class="calendar-grid" id="calendar-grid"></div>
+                    </div>
+                </div>
+
+                <!-- Previous Task Manager and Stats Cards remain unchanged -->                <!-- Task Manager -->
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Study Tasks</h2>
@@ -1006,19 +1339,15 @@
                     </div>
                 </div>
 
-                <!-- Hours Tracker -->
-                <div class="hours-tracker">
-                    <i class="fas fa-clock hours-icon"></i>
-                    <span>Total Study Time: <span id="total-hours">0h 0m</span></span>
-                </div>
             </main>
 
             <footer>
-                <p class="footer-text">All rights reserved © <span class="developer-credit">by Moaz In Dawn</span></p>
+                <!-- Footer remains unchanged -->                <p class="footer-text">All rights reserved © <span class="developer-credit">by Moaz In Dawn</span></p>
             </footer>
         </div>
     </div>
-<script>
+
+    <script>
 // User Data Management
 let userDatabase = JSON.parse(localStorage.getItem('lunarPathUsers')) || {};
 let currentUser = localStorage.getItem('currentUser') || null;
@@ -1033,6 +1362,7 @@ let tasksCompleted = 0;
 let energy = 0;
 let totalStudySeconds = 0;
 let currentRankIndex = 0;
+let examDate = null;
 
 // Rank System
 const cultivationRanks = [
@@ -1070,10 +1400,9 @@ const tasksCompletedEl = document.getElementById('tasks-completed');
 const totalEnergyEl = document.getElementById('total-energy');
 const totalHoursDisplay = document.getElementById('total-hours');
 const progressBar = document.getElementById('progress-bar');
-const rankUpAnimation = document.getElementById('rank-up-animation');
-const newRankDisplay = document.getElementById('new-rank-display');
-const rankModal = document.getElementById('rank-modal');
-const rankList = document.getElementById('rank-list');
+const examDateInput = document.getElementById('exam-date-input');
+const calendarGrid = document.getElementById('calendar-grid');
+const daysRemainingEl = document.getElementById('days-remaining');
 
 // Initialize the app
 function init() {
@@ -1097,10 +1426,10 @@ function showMainApp() {
     loginContainer.style.display = 'none';
     appContainer.style.display = 'flex';
     
-    // Initialize UI
     userNameDisplay.textContent = currentUser;
     createStars();
     loadUserData();
+    initializeExamDate();
     updateUI();
 }
 
@@ -1118,14 +1447,14 @@ function handleBeginJourney() {
         return;
     }
     
-    // Create new user
     userDatabase[username] = {
         energy: 0,
         tasks: [],
         totalSessions: 0,
         tasksCompleted: 0,
         totalStudySeconds: 0,
-        currentRankIndex: 0
+        currentRankIndex: 0,
+        examDate: null
     };
     
     currentUser = username;
@@ -1146,7 +1475,11 @@ function loadUserData() {
     totalStudySeconds = userData.totalStudySeconds || 0;
     currentRankIndex = userData.currentRankIndex || 0;
     
-    // Load tasks
+    if (userData.examDate) {
+        examDate = new Date(userData.examDate);
+        examDateInput.value = examDate.toISOString().split('T')[0];
+    }
+
     taskList.innerHTML = '';
     if (userData.tasks) {
         userData.tasks.forEach(task => {
@@ -1165,11 +1498,19 @@ function saveUserData() {
         totalSessions,
         tasksCompleted,
         totalStudySeconds,
-        currentRankIndex
+        currentRankIndex,
+        examDate: examDate ? examDate.getTime() : null
     };
     
     localStorage.setItem('lunarPathUsers', JSON.stringify(userDatabase));
     localStorage.setItem('currentUser', currentUser);
+}
+
+function saveExamDate() {
+    if (currentUser && examDate) {
+        userDatabase[currentUser].examDate = examDate.getTime();
+        localStorage.setItem('lunarPathUsers', JSON.stringify(userDatabase));
+    }
 }
 
 // Get tasks data for saving
@@ -1191,7 +1532,6 @@ function addTaskToDOM(text) {
         </div>
     `;
 
-    // Delete task event
     taskItem.querySelector('.delete-btn').addEventListener('click', () => {
         taskItem.classList.add('fade-out');
         setTimeout(() => {
@@ -1200,7 +1540,6 @@ function addTaskToDOM(text) {
         }, 300);
     });
 
-    // Complete task event
     taskItem.querySelector('.complete-btn').addEventListener('click', () => {
         taskItem.classList.add('fade-out');
         
@@ -1224,6 +1563,7 @@ function updateUI() {
     updateRank();
     updateStudyTime();
     updateTimerDisplay();
+    updateExamCalendar();
 }
 
 // Update statistics display
@@ -1265,21 +1605,81 @@ function updateRank() {
 
 // Show rank up animation
 function showRankUpAnimation(rankName) {
-    newRankDisplay.textContent = rankName;
-    rankUpAnimation.classList.add('show');
-    setTimeout(() => {
-        rankUpAnimation.classList.remove('show');
-    }, 3000);
+    const notification = document.createElement('div');
+    notification.className = 'notification energy-notification show';
+    notification.innerHTML = `
+        <div class="notification-title">
+            <i class="fas fa-trophy"></i>
+            Rank Up! New Rank: ${rankName}
+        </div>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
 }
 
-// Show ranks modal
-function showRanks() {
-    rankList.innerHTML = cultivationRanks.map((rank, index) => `
-        <li class="rank-item ${index === currentRankIndex ? 'current' : ''}">
-            ${rank.name} - ${rank.threshold} Energy
-        </li>
-    `).join('');
-    rankModal.classList.add('show');
+// Exam Date Functions
+function initializeExamDate() {
+    examDateInput.min = new Date().toISOString().split('T')[0];
+    
+    examDateInput.addEventListener('change', (e) => {
+        examDate = new Date(e.target.value);
+        examDate.setHours(0, 0, 0, 0);
+        updateExamCalendar();
+        saveExamDate();
+    });
+}
+
+function updateExamCalendar() {
+    if (!examDate) return;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const timeDiff = examDate - today;
+    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+    daysRemainingEl.innerHTML = daysDiff > 0 ? 
+        `${daysDiff} Days Remaining` : 
+        'Exam Day!';
+
+    generateCalendarCircles(daysDiff);
+}
+
+function generateCalendarCircles(totalDays) {
+    calendarGrid.innerHTML = '';
+    if (!examDate || totalDays <= 0) return;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const rows = Math.ceil(totalDays / 7);
+    
+    for (let i = 0; i < rows; i++) {
+        const row = document.createElement('div');
+        row.className = 'calendar-row';
+        
+        for (let j = 0; j < 7; j++) {
+            const dayNumber = i * 7 + j + 1;
+            if (dayNumber > totalDays) break;
+            
+            const circle = document.createElement('div');
+            const dayDate = new Date(examDate);
+            dayDate.setDate(dayDate.getDate() - (totalDays - dayNumber));
+            
+            circle.className = `day-circle ${
+                dayNumber === totalDays ? 'current' : 
+                dayDate < today ? 'past' : 'future'
+            }`;
+            
+            circle.textContent = dayNumber;
+            
+            if (dayNumber === totalDays) {
+                circle.setAttribute('data-tooltip', 'Exam Day');
+            }
+            
+            row.appendChild(circle);
+        }
+        calendarGrid.appendChild(row);
+    }
 }
 
 // Timer functions
@@ -1401,15 +1801,12 @@ function showLoginMessage(msg, type) {
 
 // Setup event listeners
 function setupEventListeners() {
-    // Begin Journey button
     beginJourneyBtn.addEventListener('click', handleBeginJourney);
     
-    // Timer controls
     startBtn.addEventListener('click', toggleTimer);
     pauseBtn.addEventListener('click', pauseTimer);
     resetBtn.addEventListener('click', resetTimer);
     
-    // Task controls
     addTaskBtn.addEventListener('click', () => {
         const taskText = taskInput.value.trim();
         if (taskText) {
@@ -1430,15 +1827,17 @@ function setupEventListeners() {
         }
     });
 
-    // Rank display
-    document.getElementById('rank-badge').addEventListener('click', showRanks);
-    
-    // Close rank modal
-    window.addEventListener('click', (e) => {
-        if (e.target === rankModal) rankModal.classList.remove('show');
+    document.getElementById('rank-badge').addEventListener('click', () => {
+        const rankModal = document.getElementById('rank-modal');
+        rankModal.classList.add('show');
     });
 
-    // Work duration change
+    window.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('rank-modal')) {
+            document.getElementById('rank-modal').classList.remove('show');
+        }
+    });
+
     workDurationInput.addEventListener('input', () => {
         if (!isRunning) {
             timeLeft = workDurationInput.value * 60;
@@ -1447,8 +1846,8 @@ function setupEventListeners() {
     });
 }
 
-// Initialize the app
+// Initialize the application
 init();
-</script>
+    </script>
 </body>
 </html>
