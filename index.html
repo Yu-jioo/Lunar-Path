@@ -878,6 +878,20 @@
             border-left: 4px solid var(--celestial-blue);
             background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
         }
+        
+        .task-item {
+    transition: all 0.3s ease, opacity 0.3s ease;
+    max-height: 60px;
+    overflow: hidden;
+}
+
+.task-item.fade-out {
+    opacity: 0;
+    transform: translateX(100%);
+    max-height: 0;
+    margin-bottom: 0;
+    padding: 0;
+}
     </style>
 </head>
 <body>
@@ -1005,444 +1019,436 @@
         </div>
     </div>
 <script>
-    // User Data Management
-    let userDatabase = JSON.parse(localStorage.getItem('lunarPathUsers')) || {};
-    let currentUser = localStorage.getItem('currentUser') || null;
+// User Data Management
+let userDatabase = JSON.parse(localStorage.getItem('lunarPathUsers')) || {};
+let currentUser = localStorage.getItem('currentUser') || null;
+
+// App State Variables
+let timeLeft = 25 * 60;
+let isRunning = false;
+let timerId = null;
+let isWorkSession = true;
+let totalSessions = 0;
+let tasksCompleted = 0;
+let energy = 0;
+let totalStudySeconds = 0;
+let currentRankIndex = 0;
+
+// Rank System
+const cultivationRanks = [
+    { threshold: 0, name: "Novice", icon: "seedling" },
+    { threshold: 50, name: "Apprentice", icon: "leaf" },
+    { threshold: 100, name: "Scholar", icon: "book" },
+    { threshold: 150, name: "Adept", icon: "graduation-cap" },
+    { threshold: 250, name: "Expert", icon: "lightbulb" },
+    { threshold: 400, name: "Master", icon: "crown" },
+    { threshold: 600, name: "Sage", icon: "hat-wizard" },
+    { threshold: 800, name: "Archmage", icon: "magic" },
+    { threshold: 1000, name: "Luminary", icon: "sun" },
+    { threshold: 1250, name: "Elder", icon: "mountain" },
+    { threshold: 1500, name: "Upper", icon: "infinity" }
+];
+
+// DOM Elements
+const loginContainer = document.getElementById('login-container');
+const appContainer = document.getElementById('app-container');
+const usernameInput = document.getElementById('username-input');
+const beginJourneyBtn = document.getElementById('begin-journey-btn');
+const loginMessage = document.getElementById('login-message');
+const userNameDisplay = document.getElementById('user-name-display');
+const startBtn = document.getElementById('start-btn');
+const pauseBtn = document.getElementById('pause-btn');
+const resetBtn = document.getElementById('reset-btn');
+const workDurationInput = document.getElementById('work-duration');
+const breakDurationInput = document.getElementById('break-duration');
+const taskInput = document.getElementById('task-input');
+const taskList = document.getElementById('task-list');
+const addTaskBtn = document.getElementById('add-task-btn');
+const energyValue = document.getElementById('energy-value');
+const sessionsCompletedEl = document.getElementById('sessions-completed');
+const tasksCompletedEl = document.getElementById('tasks-completed');
+const totalEnergyEl = document.getElementById('total-energy');
+const totalHoursDisplay = document.getElementById('total-hours');
+const progressBar = document.getElementById('progress-bar');
+const rankUpAnimation = document.getElementById('rank-up-animation');
+const newRankDisplay = document.getElementById('new-rank-display');
+const rankModal = document.getElementById('rank-modal');
+const rankList = document.getElementById('rank-list');
+
+// Initialize the app
+function init() {
+    setupEventListeners();
     
-    // App State Variables
-    let timeLeft = 25 * 60;
-    let isRunning = false;
-    let timerId = null;
-    let isWorkSession = true;
-    let totalSessions = 0;
-    let tasksCompleted = 0;
-    let energy = 0;
-    let totalStudySeconds = 0;
-    let currentRankIndex = 0;
-
-    // Rank System
-    const cultivationRanks = [
-        { threshold: 0, name: "Novice", icon: "seedling" },
-        { threshold: 50, name: "Apprentice", icon: "leaf" },
-        { threshold: 100, name: "Scholar", icon: "book" },
-        { threshold: 150, name: "Adept", icon: "graduation-cap" },
-        { threshold: 250, name: "Expert", icon: "lightbulb" },
-        { threshold: 400, name: "Master", icon: "crown" },
-        { threshold: 600, name: "Sage", icon: "hat-wizard" },
-        { threshold: 800, name: "Archmage", icon: "magic" },
-        { threshold: 1000, name: "Luminary", icon: "sun" },
-        { threshold: 1250, name: "Elder", icon: "mountain" },
-        { threshold: 1500, name: "Upper", icon: "infinity" }
-    ];
-
-    // DOM Elements
-    const loginContainer = document.getElementById('login-container');
-    const appContainer = document.getElementById('app-container');
-    const usernameInput = document.getElementById('username-input');
-    const beginJourneyBtn = document.getElementById('begin-journey-btn');
-    const loginMessage = document.getElementById('login-message');
-    const userNameDisplay = document.getElementById('user-name-display');
-    const startBtn = document.getElementById('start-btn');
-    const pauseBtn = document.getElementById('pause-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const workDurationInput = document.getElementById('work-duration');
-    const breakDurationInput = document.getElementById('break-duration');
-    const taskInput = document.getElementById('task-input');
-    const taskList = document.getElementById('task-list');
-    const addTaskBtn = document.getElementById('add-task-btn');
-    const energyValue = document.getElementById('energy-value');
-    const sessionsCompletedEl = document.getElementById('sessions-completed');
-    const tasksCompletedEl = document.getElementById('tasks-completed');
-    const totalEnergyEl = document.getElementById('total-energy');
-    const totalHoursDisplay = document.getElementById('total-hours');
-    const progressBar = document.getElementById('progress-bar');
-    const rankUpAnimation = document.getElementById('rank-up-animation');
-    const newRankDisplay = document.getElementById('new-rank-display');
-    const rankModal = document.getElementById('rank-modal');
-    const rankList = document.getElementById('rank-list');
-
-    // Initialize the app
-    function init() {
-        setupEventListeners();
-        
-        if (currentUser && userDatabase[currentUser]) {
-            showMainApp();
-        } else {
-            showLoginPage();
-        }
-    }
-
-    // Show login page
-    function showLoginPage() {
-        loginContainer.style.display = 'flex';
-        appContainer.style.display = 'none';
-    }
-
-    // Show main application
-    function showMainApp() {
-        loginContainer.style.display = 'none';
-        appContainer.style.display = 'flex';
-        
-        // Initialize UI
-        userNameDisplay.textContent = currentUser;
-        createStars();
-        loadUserData();
-        updateUI();
-    }
-
-    // Handle login/registration
-    function handleBeginJourney() {
-        const username = usernameInput.value.trim();
-        
-        if (!username) {
-            showLoginMessage('Please enter a username!', 'error');
-            return;
-        }
-        
-        if (userDatabase[username]) {
-            showLoginMessage('Username already exists!', 'error');
-            return;
-        }
-        
-        // Create new user
-        userDatabase[username] = {
-            energy: 0,
-            tasks: [],
-            totalSessions: 0,
-            tasksCompleted: 0,
-            totalStudySeconds: 0,
-            currentRankIndex: 0
-        };
-        
-        currentUser = username;
-        localStorage.setItem('lunarPathUsers', JSON.stringify(userDatabase));
-        localStorage.setItem('currentUser', currentUser);
-        
+    if (currentUser && userDatabase[currentUser]) {
         showMainApp();
+    } else {
+        showLoginPage();
     }
+}
 
-    // Load user data
-    function loadUserData() {
-        if (!currentUser || !userDatabase[currentUser]) return;
-        
-        const userData = userDatabase[currentUser];
-        energy = userData.energy || 0;
-        totalSessions = userData.totalSessions || 0;
-        tasksCompleted = userData.tasksCompleted || 0;
-        totalStudySeconds = userData.totalStudySeconds || 0;
-        currentRankIndex = userData.currentRankIndex || 0;
-        
-        // Load tasks
-        taskList.innerHTML = '';
-        if (userData.tasks) {
-            userData.tasks.forEach(task => {
-                addTaskToDOM(task.text, task.completed);
-            });
-        }
+// Show login page
+function showLoginPage() {
+    loginContainer.style.display = 'flex';
+    appContainer.style.display = 'none';
+}
+
+// Show main application
+function showMainApp() {
+    loginContainer.style.display = 'none';
+    appContainer.style.display = 'flex';
+    
+    // Initialize UI
+    userNameDisplay.textContent = currentUser;
+    createStars();
+    loadUserData();
+    updateUI();
+}
+
+// Handle login/registration
+function handleBeginJourney() {
+    const username = usernameInput.value.trim();
+    
+    if (!username) {
+        showLoginMessage('Please enter a username!', 'error');
+        return;
     }
-
-    // Save user data
-    function saveUserData() {
-        if (!currentUser) return;
-        
-        userDatabase[currentUser] = {
-            energy,
-            tasks: getTasksData(),
-            totalSessions,
-            tasksCompleted,
-            totalStudySeconds,
-            currentRankIndex
-        };
-        
-        localStorage.setItem('lunarPathUsers', JSON.stringify(userDatabase));
-        localStorage.setItem('currentUser', currentUser);
+    
+    if (userDatabase[username]) {
+        showLoginMessage('Username already exists!', 'error');
+        return;
     }
+    
+    // Create new user
+    userDatabase[username] = {
+        energy: 0,
+        tasks: [],
+        totalSessions: 0,
+        tasksCompleted: 0,
+        totalStudySeconds: 0,
+        currentRankIndex: 0
+    };
+    
+    currentUser = username;
+    localStorage.setItem('lunarPathUsers', JSON.stringify(userDatabase));
+    localStorage.setItem('currentUser', currentUser);
+    
+    showMainApp();
+}
 
-    // Get tasks data for saving
-    function getTasksData() {
-        return Array.from(taskList.children).map(task => ({
-            text: task.querySelector('.task-text').textContent,
-            completed: task.classList.contains('completed')
-        }));
+// Load user data
+function loadUserData() {
+    if (!currentUser || !userDatabase[currentUser]) return;
+    
+    const userData = userDatabase[currentUser];
+    energy = userData.energy || 0;
+    totalSessions = userData.totalSessions || 0;
+    tasksCompleted = userData.tasksCompleted || 0;
+    totalStudySeconds = userData.totalStudySeconds || 0;
+    currentRankIndex = userData.currentRankIndex || 0;
+    
+    // Load tasks
+    taskList.innerHTML = '';
+    if (userData.tasks) {
+        userData.tasks.forEach(task => {
+            addTaskToDOM(task.text);
+        });
     }
+}
 
-    // Add task to DOM
-    function addTaskToDOM(text, completed = false) {
-        const taskItem = document.createElement('li');
-        taskItem.className = `task-item ${completed ? 'completed' : ''}`;
-        taskItem.innerHTML = `
-            <span class="task-text">${text}</span>
-            <div class="task-actions">
-                <button class="task-btn complete-btn"><i class="fas fa-check"></i></button>
-                <button class="task-btn delete-btn"><i class="fas fa-trash"></i></button>
-            </div>
-        `;
+// Save user data
+function saveUserData() {
+    if (!currentUser) return;
+    
+    userDatabase[currentUser] = {
+        energy,
+        tasks: getTasksData(),
+        totalSessions,
+        tasksCompleted,
+        totalStudySeconds,
+        currentRankIndex
+    };
+    
+    localStorage.setItem('lunarPathUsers', JSON.stringify(userDatabase));
+    localStorage.setItem('currentUser', currentUser);
+}
 
-        // Delete task event
-        taskItem.querySelector('.delete-btn').addEventListener('click', () => {
-            if (taskItem.classList.contains('completed')) {
-                tasksCompleted--;
-                energy -= 5;
-                updateStats();
-            }
+// Get tasks data for saving
+function getTasksData() {
+    return Array.from(taskList.children).map(task => ({
+        text: task.querySelector('.task-text').textContent
+    }));
+}
+
+// Add task to DOM
+function addTaskToDOM(text) {
+    const taskItem = document.createElement('li');
+    taskItem.className = 'task-item';
+    taskItem.innerHTML = `
+        <span class="task-text">${text}</span>
+        <div class="task-actions">
+            <button class="task-btn complete-btn"><i class="fas fa-check"></i></button>
+            <button class="task-btn delete-btn"><i class="fas fa-trash"></i></button>
+        </div>
+    `;
+
+    // Delete task event
+    taskItem.querySelector('.delete-btn').addEventListener('click', () => {
+        taskItem.classList.add('fade-out');
+        setTimeout(() => {
             taskItem.remove();
             saveUserData();
-        });
+        }, 300);
+    });
 
-        // Complete task event
-        taskItem.querySelector('.complete-btn').addEventListener('click', () => {
-            const wasCompleted = taskItem.classList.contains('completed');
-            taskItem.classList.toggle('completed');
-            
-            if (!wasCompleted) {
-                energy += 5;
-                tasksCompleted++;
-                showEnergyNotification('+5 Energy Gained!');
-            } else {
-                energy -= 5;
-                tasksCompleted--;
-                showEnergyNotification('-5 Energy Lost!');
-            }
-            
+    // Complete task event
+    taskItem.querySelector('.complete-btn').addEventListener('click', () => {
+        taskItem.classList.add('fade-out');
+        
+        setTimeout(() => {
+            taskItem.remove();
+            energy += 5;
+            tasksCompleted++;
             updateStats();
             updateRank();
             saveUserData();
-        });
+            showEnergyNotification('+5 Energy Gained!');
+        }, 300);
+    });
 
-        taskList.appendChild(taskItem);
+    taskList.appendChild(taskItem);
+}
+
+// Update UI elements
+function updateUI() {
+    updateStats();
+    updateRank();
+    updateStudyTime();
+    updateTimerDisplay();
+}
+
+// Update statistics display
+function updateStats() {
+    sessionsCompletedEl.textContent = totalSessions;
+    tasksCompletedEl.textContent = tasksCompleted;
+    totalEnergyEl.textContent = energy;
+    energyValue.textContent = energy;
+}
+
+// Update rank display
+function updateRank() {
+    let newRankIndex = 0;
+    for (let i = cultivationRanks.length - 1; i >= 0; i--) {
+        if (energy >= cultivationRanks[i].threshold) {
+            newRankIndex = i;
+            break;
+        }
     }
 
-    // Update UI elements
-    function updateUI() {
+    if (newRankIndex > currentRankIndex) {
+        currentRankIndex = newRankIndex;
+        showRankUpAnimation(cultivationRanks[currentRankIndex].name);
+    }
+
+    const currentRank = cultivationRanks[currentRankIndex];
+    const nextRank = cultivationRanks[currentRankIndex + 1] || cultivationRanks[currentRankIndex];
+    
+    document.getElementById('rank-badge').innerHTML = `
+        <i class="fas fa-${currentRank.icon} badge-icon"></i>
+        <span>${currentRank.name}</span>
+    `;
+
+    const progress = nextRank ? 
+        ((energy - currentRank.threshold) / (nextRank.threshold - currentRank.threshold)) * 100 : 
+        100;
+    progressBar.style.width = `${Math.min(100, progress)}%`;
+}
+
+// Show rank up animation
+function showRankUpAnimation(rankName) {
+    newRankDisplay.textContent = rankName;
+    rankUpAnimation.classList.add('show');
+    setTimeout(() => {
+        rankUpAnimation.classList.remove('show');
+    }, 3000);
+}
+
+// Show ranks modal
+function showRanks() {
+    rankList.innerHTML = cultivationRanks.map((rank, index) => `
+        <li class="rank-item ${index === currentRankIndex ? 'current' : ''}">
+            ${rank.name} - ${rank.threshold} Energy
+        </li>
+    `).join('');
+    rankModal.classList.add('show');
+}
+
+// Timer functions
+function toggleTimer() {
+    if (!isRunning) {
+        isRunning = true;
+        startBtn.textContent = 'Stop Session';
+        timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
+        updateTimerDisplay();
+        timerId = setInterval(updateTimer, 1000);
+    } else {
+        resetTimer();
+    }
+}
+
+function pauseTimer() {
+    if (!isRunning) return;
+    
+    isRunning = false;
+    clearInterval(timerId);
+    startBtn.textContent = 'Resume Session';
+}
+
+function resetTimer() {
+    isRunning = false;
+    clearInterval(timerId);
+    timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
+    updateTimerDisplay();
+    startBtn.textContent = 'Start Session';
+}
+
+function updateTimer() {
+    timeLeft--;
+    
+    if (isWorkSession) {
+        totalStudySeconds++;
+        updateStudyTime();
+    }
+    
+    if (timeLeft <= 0) {
+        clearInterval(timerId);
+        handleSessionComplete();
+    }
+    
+    updateTimerDisplay();
+}
+
+function handleSessionComplete() {
+    if (isWorkSession) {
+        totalSessions++;
+        energy += 10;
         updateStats();
         updateRank();
-        updateStudyTime();
-        updateTimerDisplay();
+        saveUserData();
     }
-
-    // Update statistics display
-    function updateStats() {
-        sessionsCompletedEl.textContent = totalSessions;
-        tasksCompletedEl.textContent = tasksCompleted;
-        totalEnergyEl.textContent = energy;
-        energyValue.textContent = energy;
-    }
-
-    // Update rank display
-    function updateRank() {
-        let newRankIndex = 0;
-        for (let i = cultivationRanks.length - 1; i >= 0; i--) {
-            if (energy >= cultivationRanks[i].threshold) {
-                newRankIndex = i;
-                break;
-            }
-        }
-
-        if (newRankIndex > currentRankIndex) {
-            currentRankIndex = newRankIndex;
-            showRankUpAnimation(cultivationRanks[currentRankIndex].name);
-        }
-
-        const currentRank = cultivationRanks[currentRankIndex];
-        const nextRank = cultivationRanks[currentRankIndex + 1] || cultivationRanks[currentRankIndex];
-        
-        document.getElementById('rank-badge').innerHTML = `
-            <i class="fas fa-${currentRank.icon} badge-icon"></i>
-            <span>${currentRank.name}</span>
-        `;
-
-        const progress = nextRank ? 
-            ((energy - currentRank.threshold) / (nextRank.threshold - currentRank.threshold)) * 100 : 
-            100;
-        progressBar.style.width = `${Math.min(100, progress)}%`;
-    }
-
-    // Show rank up animation
-    function showRankUpAnimation(rankName) {
-        newRankDisplay.textContent = rankName;
-        rankUpAnimation.classList.add('show');
-        setTimeout(() => {
-            rankUpAnimation.classList.remove('show');
-        }, 3000);
-    }
-
-    // Show ranks modal
-    function showRanks() {
-        rankList.innerHTML = cultivationRanks.map((rank, index) => `
-            <li class="rank-item ${index === currentRankIndex ? 'current' : ''}">
-                ${rank.name} - ${rank.threshold} Energy
-            </li>
-        `).join('');
-        rankModal.classList.add('show');
-    }
-
-    // Timer functions
-    function toggleTimer() {
-        if (!isRunning) {
-            isRunning = true;
-            startBtn.textContent = 'Stop Session';
-            timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
-            updateTimerDisplay();
-            timerId = setInterval(updateTimer, 1000);
-        } else {
-            resetTimer();
-        }
-    }
-
-    function pauseTimer() {
-        if (!isRunning) return;
-        
-        isRunning = false;
-        clearInterval(timerId);
-        startBtn.textContent = 'Resume Session';
-    }
-
-    function resetTimer() {
-        isRunning = false;
-        clearInterval(timerId);
-        timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
-        updateTimerDisplay();
+    
+    isWorkSession = !isWorkSession;
+    timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
+    
+    if (isWorkSession) {
         startBtn.textContent = 'Start Session';
+        isRunning = false;
+    } else {
+        toggleTimer();
     }
+}
 
-    function updateTimer() {
-        timeLeft--;
-        
-        if (isWorkSession) {
-            totalStudySeconds++;
-            updateStudyTime();
-        }
-        
-        if (timeLeft <= 0) {
-            clearInterval(timerId);
-            handleSessionComplete();
-        }
-        
-        updateTimerDisplay();
+function updateTimerDisplay() {
+    const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+    const seconds = (timeLeft % 60).toString().padStart(2, '0');
+    document.getElementById('timer-display').textContent = `${minutes}:${seconds}`;
+}
+
+function updateStudyTime() {
+    const hours = Math.floor(totalStudySeconds / 3600);
+    const minutes = Math.floor((totalStudySeconds % 3600) / 60);
+    totalHoursDisplay.textContent = `${hours}h ${minutes}m`;
+}
+
+// Show energy notification
+function showEnergyNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification energy-notification show';
+    notification.innerHTML = `
+        <div class="notification-title">
+            <i class="fas fa-bolt"></i>
+            ${message}
+        </div>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+// Create stars background
+function createStars() {
+    const container = document.getElementById('cosmic-bg');
+    container.innerHTML = '';
+    for (let i = 0; i < 200; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.width = Math.random() * 3 + 'px';
+        star.style.height = star.style.width;
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.setProperty('--duration', Math.random() * 3 + 2 + 's');
+        container.appendChild(star);
     }
+}
 
-    function handleSessionComplete() {
-        if (isWorkSession) {
-            totalSessions++;
-            energy += 10;
-            updateStats();
-            updateRank();
+// Show login message
+function showLoginMessage(msg, type) {
+    loginMessage.textContent = msg;
+    loginMessage.className = `login-message ${type}`;
+    setTimeout(() => {
+        loginMessage.textContent = '';
+        loginMessage.className = 'login-message';
+    }, 3000);
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    // Begin Journey button
+    beginJourneyBtn.addEventListener('click', handleBeginJourney);
+    
+    // Timer controls
+    startBtn.addEventListener('click', toggleTimer);
+    pauseBtn.addEventListener('click', pauseTimer);
+    resetBtn.addEventListener('click', resetTimer);
+    
+    // Task controls
+    addTaskBtn.addEventListener('click', () => {
+        const taskText = taskInput.value.trim();
+        if (taskText) {
+            addTaskToDOM(taskText);
+            taskInput.value = '';
             saveUserData();
         }
-        
-        isWorkSession = !isWorkSession;
-        timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
-        
-        if (isWorkSession) {
-            startBtn.textContent = 'Start Session';
-            isRunning = false;
-        } else {
-            toggleTimer();
-        }
-    }
+    });
 
-    function updateTimerDisplay() {
-        const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-        const seconds = (timeLeft % 60).toString().padStart(2, '0');
-        document.getElementById('timer-display').textContent = `${minutes}:${seconds}`;
-    }
-
-    function updateStudyTime() {
-        const hours = Math.floor(totalStudySeconds / 3600);
-        const minutes = Math.floor((totalStudySeconds % 3600) / 60);
-        totalHoursDisplay.textContent = `${hours}h ${minutes}m`;
-    }
-
-    // Show energy notification
-    function showEnergyNotification(message) {
-        const notification = document.createElement('div');
-        notification.className = 'notification energy-notification show';
-        notification.innerHTML = `
-            <div class="notification-title">
-                <i class="fas fa-bolt"></i>
-                ${message}
-            </div>
-        `;
-        document.body.appendChild(notification);
-        setTimeout(() => notification.remove(), 3000);
-    }
-
-    // Create stars background
-    function createStars() {
-        const container = document.getElementById('cosmic-bg');
-        container.innerHTML = '';
-        for (let i = 0; i < 200; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.width = Math.random() * 3 + 'px';
-            star.style.height = star.style.width;
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.setProperty('--duration', Math.random() * 3 + 2 + 's');
-            container.appendChild(star);
-        }
-    }
-
-    // Show login message
-    function showLoginMessage(msg, type) {
-        loginMessage.textContent = msg;
-        loginMessage.className = `login-message ${type}`;
-        setTimeout(() => {
-            loginMessage.textContent = '';
-            loginMessage.className = 'login-message';
-        }, 3000);
-    }
-
-    // Setup event listeners
-    function setupEventListeners() {
-        // Begin Journey button
-        beginJourneyBtn.addEventListener('click', handleBeginJourney);
-        
-        // Timer controls
-        startBtn.addEventListener('click', toggleTimer);
-        pauseBtn.addEventListener('click', pauseTimer);
-        resetBtn.addEventListener('click', resetTimer);
-        
-        // Task controls
-        addTaskBtn.addEventListener('click', () => {
+    taskInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
             const taskText = taskInput.value.trim();
             if (taskText) {
                 addTaskToDOM(taskText);
                 taskInput.value = '';
                 saveUserData();
             }
-        });
+        }
+    });
 
-        taskInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                const taskText = taskInput.value.trim();
-                if (taskText) {
-                    addTaskToDOM(taskText);
-                    taskInput.value = '';
-                    saveUserData();
-                }
-            }
-        });
+    // Rank display
+    document.getElementById('rank-badge').addEventListener('click', showRanks);
+    
+    // Close rank modal
+    window.addEventListener('click', (e) => {
+        if (e.target === rankModal) rankModal.classList.remove('show');
+    });
 
-        // Rank display
-        document.getElementById('rank-badge').addEventListener('click', showRanks);
-        
-        // Close rank modal
-        window.addEventListener('click', (e) => {
-            if (e.target === rankModal) rankModal.classList.remove('show');
-        });
+    // Work duration change
+    workDurationInput.addEventListener('input', () => {
+        if (!isRunning) {
+            timeLeft = workDurationInput.value * 60;
+            updateTimerDisplay();
+        }
+    });
+}
 
-        // Work duration change
-        workDurationInput.addEventListener('input', () => {
-            if (!isRunning) {
-                timeLeft = workDurationInput.value * 60;
-                updateTimerDisplay();
-            }
-        });
-    }
-
-    // Initialize the app
-    init();
+// Initialize the app
+init();
 </script>
 </body>
 </html>
