@@ -701,53 +701,61 @@
             margin-bottom: 1rem;
         }
 
-        .rank-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1001;
-            justify-content: center;
-            align-items: center;
-        }
+.rank-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1001;
+    justify-content: center;
+    align-items: center;
+}
 
-        .rank-modal.show {
-            display: flex;
-        }
+.rank-modal.show {
+    display: flex;
+}
 
-        .rank-modal-content {
-            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
-            padding: 2rem;
-            border-radius: 15px;
-            border: 1px solid var(--celestial-blue);
-            box-shadow: 0 0 30px var(--moon-glow);
-            backdrop-filter: blur(10px);
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
+.rank-modal-content {
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+    padding: 2rem;
+    border-radius: 15px;
+    border: 1px solid var(--celestial-blue);
+    box-shadow: 0 0 30px var(--moon-glow);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
 
-        .rank-list {
-            list-style: none;
-            margin-top: 1rem;
-        }
+.rank-list {
+    margin-top: 1.5rem;
+}
 
-        .rank-item {
-            padding: 1rem;
-            margin: 0.5rem 0;
-            background: rgba(30, 41, 59, 0.4);
-            border-radius: 8px;
-            border-left: 3px solid transparent;
-        }
+.rank-item {
+    padding: 1rem;
+    margin: 0.5rem 0;
+    background: rgba(30, 41, 59, 0.4);
+    border-radius: 8px;
+    border-left: 3px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
 
-        .rank-item.current {
-            border-left-color: var(--celestial-blue);
-            background: rgba(56, 189, 248, 0.1);
-        }
+.rank-item.current {
+    border-left-color: var(--celestial-blue);
+    background: rgba(56, 189, 248, 0.1);
+    box-shadow: 0 0 15px var(--moon-glow);
+}
+
+.rank-item i {
+    color: var(--celestial-blue);
+    width: 25px;
+}
 
         .code-modal {
             display: none;
@@ -1224,13 +1232,13 @@
         </div>
     </div>
 
-    <!-- Rank Modal -->
-    <div class="rank-modal" id="rank-modal">
-        <div class="rank-modal-content">
-            <h3>Cultivation Ranks</h3>
-            <ul class="rank-list" id="rank-list"></ul>
-        </div>
+<!-- Rank Modal -->
+<div class="rank-modal" id="rank-modal">
+    <div class="rank-modal-content">
+        <h3>Cultivation Ranks</h3>
+        <ul class="rank-list" id="rank-list"></ul>
     </div>
+</div>
 
 
     <!-- Main App -->
@@ -1403,6 +1411,10 @@ const progressBar = document.getElementById('progress-bar');
 const examDateInput = document.getElementById('exam-date-input');
 const calendarGrid = document.getElementById('calendar-grid');
 const daysRemainingEl = document.getElementById('days-remaining');
+document.getElementById('rank-badge').addEventListener('click', () => {
+    updateRankList();
+    document.getElementById('rank-modal').classList.add('show');
+});
 
 // Initialize the app
 function init() {
@@ -1843,6 +1855,21 @@ function setupEventListeners() {
             timeLeft = workDurationInput.value * 60;
             updateTimerDisplay();
         }
+    });
+}
+
+function updateRankList() {
+    const rankList = document.getElementById('rank-list');
+    rankList.innerHTML = '';
+    
+    cultivationRanks.forEach((rank, index) => {
+        const rankItem = document.createElement('li');
+        rankItem.className = `rank-item ${index === currentRankIndex ? 'current' : ''}`;
+        rankItem.innerHTML = `
+            <i class="fas fa-${rank.icon}"></i>
+            ${rank.name} (${rank.threshold}+)
+        `;
+        rankList.appendChild(rankItem);
     });
 }
 
