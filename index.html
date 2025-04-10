@@ -1,569 +1,1448 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upper - Abyssal Path</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>Lunar Path</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
-            --abyssal-deep: #000814;
-            --midnight-ocean: #001d3d;
-            --abyssal-blue: #003566;
-            --deep-current: #00509d;
-            --lumen-accent: #48cae4;
-            --crystal-foam: #90e0ef;
-            --glass: rgba(72, 202, 228, 0.1);
-            --glass-border: rgba(72, 202, 228, 0.2);
-            --bg-gradient: linear-gradient(135deg, var(--abyssal-deep), var(--midnight-ocean));
-            --border-radius: 16px;
-            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --void-black: #0a0a12;
+            --abyss-blue: #0f172a;
+            --twilight-indigo: #1e293b;
+            --celestial-blue: #38bdf8;
+            --moon-purple: #7c3aed;
+            --starlight: #e2e8f0;
+            --shadow-deep: #020617;
+            --moon-glow: rgba(56, 189, 248, 0.3);
+            --star-dust: rgba(124, 58, 237, 0.3);
         }
 
+        /* الأنماط الأصلية تبقى كما هي */
+        
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
+            background: radial-gradient(circle at center, var(--abyss-blue), var(--void-black));
+            color: var(--starlight);
             min-height: 100vh;
-            background: var(--bg-gradient);
-            color: var(--crystal-foam);
-            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
             line-height: 1.6;
-            padding: 1.5rem;
             display: flex;
             flex-direction: column;
         }
 
-        .logo-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-.logo-icon {
-    position: relative;
-    font-family: 'Inter', sans-serif;
-    font-weight: 800;
-    font-size: 2.2rem;
-    color: transparent;
-    background: linear-gradient(
-        145deg,
-        var(--crystal-foam) 30%,
-        var(--lumen-accent) 70%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    text-shadow: 0 0 12px rgba(72, 202, 228, 0.3);
-    transform: translateY(2px);
-    z-index: 2;
-}
-
-.logo-icon::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60%;
-    height: 3px;
-    background: var(--lumen-accent);
-    border-radius: 2px;
-    filter: drop-shadow(0 0 4px var(--lumen-accent));
-    opacity: 0.8;
-    animation: pulseLine 3s ease-in-out infinite;
-}
-
-@keyframes pulseLine {
-    0%, 100% { width: 60%; opacity: 0.8; }
-    50% { width: 80%; opacity: 0.4; }
-}
-
-        .site-title {
-            font-size: 2.2rem;
-            background: linear-gradient(45deg, var(--crystal-foam), var(--lumen-accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-            letter-spacing: -0.03em;
-        }
-
-        .user-count {
-            font-size: 1rem;
-            opacity: 0.8;
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(0, 53, 102, 0.6);
-            padding: 0.5rem 1rem 0.5rem 1.5rem;
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            position: relative;
-        }
-
-        .user-count::before {
-            content: '';
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: var(--lumen-accent);
-            border-radius: 50%;
-            left: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            animation: pulse 2s infinite;
-        }
-
-        .glass {
-            background: linear-gradient(135deg, var(--glass), rgba(0, 53, 102, 0.3));
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-radius: var(--border-radius);
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .btn {
-            padding: 1rem 1.5rem;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            cursor: pointer;
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            display: flex;
             justify-content: center;
-            background: linear-gradient(135deg, var(--lumen-accent), var(--deep-current));
-            color: var(--abyssal-deep);
-            border: none;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
+            align-items: center;
+            background: radial-gradient(circle at center, var(--abyss-blue), var(--void-black));
+            z-index: 1000;
+            backdrop-filter: blur(5px);
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(72, 202, 228, 0.3);
+        .login-box {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8));
+            padding: 3rem;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            border: 1px solid var(--celestial-blue);
+            box-shadow: 0 0 30px var(--moon-glow);
+            position: relative;
+        }
+
+        .login-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(90deg, var(--celestial-blue), var(--moon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--celestial-blue);
+            border-radius: 8px;
+            color: var(--starlight);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--moon-purple), var(--celestial-blue));
+            color: var(--void-black);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px var(--star-dust);
+        }
+
+        .developer-credit-login {
+            position: absolute;
+            bottom: 1rem;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: rgba(226, 232, 240, 0.5);
+            font-size: 0.9rem;
+        }
+
+        .app-container {
+            display: none;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            width: 100%;
+            padding: 2rem;
+            position: relative;
             flex: 1;
         }
 
-        .timeline-container {
-            padding: 1.5rem;
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-        }
-
-        .day-marker {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(72, 202, 228, 0.05);
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin: 0 auto;
-            transition: var(--transition);
-            position: relative;
-            border: 1px solid transparent;
-        }
-
-        .day-marker:hover {
-            border-color: var(--lumen-accent);
-            transform: scale(1.1);
-        }
-
-        .day-marker.today {
-            background: var(--lumen-accent);
-            color: var(--abyssal-deep);
-            box-shadow: 0 0 16px rgba(72, 202, 228, 0.4);
-            font-weight: 700;
-        }
-
-        .login-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            gap: 2.5rem;
-            padding: 2rem;
-            text-align: center;
-            max-width: 480px;
-            margin: 0 auto;
-            animation: fadeIn 1s ease-out;
-        }
-
-        input {
-            padding: 1rem 1.5rem;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            background: rgba(0, 53, 102, 0.6);
-            color: var(--crystal-foam);
-            border: 1px solid var(--glass-border);
+        .cosmic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            transition: var(--transition);
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
         }
 
-        input:focus {
-            border-color: var(--lumen-accent);
-            box-shadow: 0 0 0 3px rgba(72, 202, 228, 0.2);
-            outline: none;
-        }
-
-        .quote-container {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            text-align: center;
-            font-style: italic;
+        .star {
+            position: absolute;
+            background: var(--starlight);
+            border-radius: 50%;
             opacity: 0.8;
-            border-top: 1px solid var(--glass-border);
+            animation: twinkle var(--duration) infinite ease-in-out;
         }
 
-        .social-links {
-            margin-top: auto;
-            padding: 2rem 0;
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            position: relative;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--celestial-blue), var(--moon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 0 10px var(--moon-glow));
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--celestial-blue), var(--moon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .energy-system {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(15, 23, 42, 0.7);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--celestial-blue);
+            box-shadow: 0 0 25px var(--moon-glow);
+            position: relative;
+            overflow: hidden;
+            order: 1;
+            width: 100%;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .energy-system::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.2), transparent);
+            transform: translateX(-100%);
+            animation: energyFlow 3s infinite;
+        }
+
+        @keyframes energyFlow {
+            100% { transform: translateX(100%); }
+        }
+
+        .user-name {
+            color: var(--celestial-blue);
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .rank-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--moon-purple), var(--celestial-blue));
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .badge-icon {
+            font-size: 1.2rem;
+        }
+
+        .progress-container {
+            flex: 1;
+            max-width: 200px;
+            height: 10px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 0 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--moon-purple), var(--celestial-blue));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .hours-tracker {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: rgba(15, 23, 42, 0.7);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--moon-purple);
+            box-shadow: 0 0 15px var(--star-dust);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 5;
+        }
+
+        .hours-icon {
+            color: var(--moon-purple);
+            font-size: 1.2rem;
+        }
+                .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.6), rgba(30, 41, 59, 0.4));
+            border-radius: 10px;
+            padding: 2rem;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 10px 30px rgba(2, 6, 23, 0.5);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(56, 189, 248, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--celestial-blue);
+            letter-spacing: 0.5px;
+        }
+
+        .card-icon {
+            font-size: 1.8rem;
+            color: var(--moon-purple);
+            opacity: 0.8;
+        }
+
+        .timer-display {
+            font-size: 5.5rem;
+            font-weight: 300;
+            text-align: center;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', monospace;
+            color: var(--celestial-blue);
+            text-shadow: 0 0 20px var(--moon-glow);
+            letter-spacing: 2px;
+        }
+
+        .timer-controls {
             display: flex;
             justify-content: center;
             gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
-        .social-link {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(124, 58, 237, 0.2));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--moon-purple), var(--celestial-blue));
+            color: var(--void-black);
+            box-shadow: 0 5px 20px var(--star-dust);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px var(--moon-glow);
+        }
+
+        .btn-secondary {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--celestial-blue);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(56, 189, 248, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .timer-settings {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .setting-label {
+            font-size: 0.9rem;
+            color: var(--celestial-blue);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .setting-input {
+            width: 80px;
+            padding: 0.5rem;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 6px;
+            color: var(--starlight);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .setting-input:focus {
+            outline: none;
+            border-color: var(--celestial-blue);
+            box-shadow: 0 0 10px var(--moon-glow);
+        }
+
+        .task-input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .task-input {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .task-input-field {
+            flex: 1;
+            min-width: 250px;
+            padding: 1rem 1.5rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 8px;
+            color: var(--starlight);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .task-input-field::placeholder {
+            color: rgba(226, 232, 240, 0.5);
+        }
+
+        .task-input-field:focus {
+            outline: none;
+            border-color: var(--celestial-blue);
+            box-shadow: 0 0 15px var(--moon-glow);
+        }
+                .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 1.5rem;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--moon-purple);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(124, 58, 237, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .task-item:hover::before {
+            transform: translateX(0);
+        }
+
+        .task-item.completed {
+            border-left-color: var(--celestial-blue);
+            opacity: 0.8;
+        }
+
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            color: rgba(226, 232, 240, 0.6);
+        }
+
+        .task-text {
+            flex: 1;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 0.8rem;
+        }
+               .task-btn {
+            background: none;
+            border: none;
+            color: rgba(226, 232, 240, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(72, 202, 228, 0.1);
-            border: 1px solid var(--glass-border);
-            transition: var(--transition);
-            color: var(--crystal-foam);
-            text-decoration: none;
+            border-radius: 50%;
         }
 
-        .social-link:hover {
-            background: var(--lumen-accent);
-            color: var(--abyssal-deep);
-            transform: translateY(-2px);
+        .task-btn.complete-btn:hover {
+            color: var(--celestial-blue);
+            background: rgba(56, 189, 248, 0.1);
+            transform: rotate(10deg);
         }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+        .task-btn.delete-btn:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            transform: rotate(10deg);
         }
 
-        @keyframes pulse {
-            0% {
-                transform: translateY(-50%) scale(0.95);
-                box-shadow: 0 0 0 0 rgba(72, 202, 228, 0.7);
-            }
-            70% {
-                transform: translateY(-50%) scale(1);
-                box-shadow: 0 0 0 10px rgba(72, 202, 228, 0);
-            }
-            100% {
-                transform: translateY(-50%) scale(0.95);
-                box-shadow: 0 0 0 0 rgba(72, 202, 228, 0);
-            }
+        .stats-card {
+            grid-column: span 2;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
 
-        @media (max-width: 600px) {
-            body {
-                padding: 1rem;
+        .stat-item:hover {
+            transform: translateY(-5px);
+            background: rgba(30, 41, 59, 0.6);
+            box-shadow: 0 10px 20px rgba(2, 6, 23, 0.3);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 300;
+            background: linear-gradient(135deg, var(--celestial-blue), var(--moon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 15px var(--star-dust);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--celestial-blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        footer {
+            background: rgba(15, 23, 42, 0.7);
+            padding: 1.5rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(56, 189, 248, 0.2);
+            margin-top: auto;
+        }
+
+        .footer-text {
+            font-size: 0.9rem;
+            color: var(--starlight);
+        }
+
+        .developer-credit {
+            background: linear-gradient(90deg, var(--celestial-blue), var(--moon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 600;
+        }
+
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9));
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--celestial-blue);
+            box-shadow: 0 10px 25px rgba(2, 6, 23, 0.4);
+            transform: translateX(200%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            max-width: 350px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-title {
+            color: var(--celestial-blue);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .notification-message {
+            font-size: 0.95rem;
+            color: rgba(226, 232, 240, 0.8);
+            line-height: 1.6;
+        }
+
+        .rank-up-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.2), transparent 70%);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .rank-up-animation.show {
+            opacity: 1;
+        }
+
+        .rank-up-content {
+            background: linear-gradient(145deg, var(--abyss-blue), var(--twilight-indigo));
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--celestial-blue);
+            box-shadow: 0 0 30px var(--moon-glow);
+            transform: scale(0.5);
+            transition: transform 0.5s ease;
+        }
+
+        .rank-up-animation.show .rank-up-content {
+            transform: scale(1);
+        }
+
+        .rank-up-title {
+            font-size: 2rem;
+            color: var(--celestial-blue);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px var(--moon-glow);
+        }
+
+        .rank-up-rank {
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--celestial-blue), var(--moon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .rank-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .rank-modal.show {
+            display: flex;
+        }
+
+        .rank-modal-content {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--celestial-blue);
+            box-shadow: 0 0 30px var(--moon-glow);
+            backdrop-filter: blur(10px);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .rank-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .rank-item {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 8px;
+            border-left: 3px solid transparent;
+        }
+
+        .rank-item.current {
+            border-left-color: var(--celestial-blue);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .code-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1002;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .code-modal-content {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid var(--celestial-blue);
+            box-shadow: 0 0 30px var(--moon-glow);
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .code-input {
+            width: 100%;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--celestial-blue);
+            border-radius: 8px;
+            color: var(--starlight);
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        .code-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-direction: column;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
             }
             
-            .logo {
-                width: 48px;
-                height: 48px;
+            .stats-card {
+                grid-column: span 1;
+                grid-template-columns: 1fr;
             }
             
-            .site-title {
-                font-size: 1.8rem;
+            .timer-display {
+                font-size: 4rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: flex-start;
             }
             
-            .day-marker {
-                width: 36px;
-                height: 36px;
+            .energy-system {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .timer-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+                        .timer-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .task-input {
+                flex-direction: column;
+            }
+            
+            .task-input-field {
+                width: 100%;
+            }
+            
+            .hours-tracker {
+                position: static;
+                margin-top: 2rem;
+                width: 100%;
+            }
+            
+            .timer-display {
+                font-size: 3rem;
             }
 
-            .user-count {
-                font-size: 0.9rem;
-                padding: 0.4rem 0.8rem 0.4rem 1.2rem;
+            .progress-container {
+                max-width: 120px;
             }
+        }
+        /* أنماط تسجيل الدخول بجوجل */
+        .google-signin-btn {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            margin: 1rem 0;
+        }
 
-            .social-links {
-                gap: 1rem;
-                padding: 1.5rem 0;
-            }
+        .google-signin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(66, 133, 244, 0.3);
+        }
+
+        /* إشعار الطاقة */
+        .energy-notification {
+            border-left: 4px solid var(--celestial-blue);
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
         }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div class="login-screen" id="loginScreen">
-        <div class="logo-header">
-            <div class="logo">
-                <span class="logo-icon">√</span>
+    <!-- Login Page -->
+    <div class="login-container" id="login-container">
+        <div class="login-box">
+            <h1 class="login-title">Lunar Path</h1>
+            <div class="login-form">
+                <input type="text" class="login-input" id="username-input" placeholder="Enter your username">
+                <button class="login-btn" id="begin-journey-btn">Begin Journey</button>
+                <div class="login-message" id="login-message"></div>
             </div>
-            <div class="site-title">Upper</div>
-        </div>
-        <p style="max-width: 400px; opacity: 0.8; font-size: 1.1rem;">Begin your journey</p>
-        <input type="text" id="username" placeholder="Enter your name" autocomplete="off" autofocus>
-        <button class="btn glass" id="beginBtn" style="margin-top: 1rem;">
-            <span class="material-icons">waves</span>
-            Begin
-        </button>
-        <div class="quote-container" id="dailyQuote">
-            "The ocean's depth reveals what the surface never knows"
+            <div class="developer-credit-login">Developed by Moaz In Dawn</div>
         </div>
     </div>
 
-    <!-- Main Application -->
-    <main id="mainApp" style="display: none;">
-        <!-- Header -->
-        <div class="logo-header">
-            <div class="logo">
-                <span class="logo-icon">√</span>
+    <!-- Rank Modal -->
+    <div class="rank-modal" id="rank-modal">
+        <div class="rank-modal-content">
+            <h3>Cultivation Ranks</h3>
+            <ul class="rank-list" id="rank-list"></ul>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container" id="app-container">
+        <div class="cosmic-bg" id="cosmic-bg"></div>
+        
+        <!-- Rank Up Animation -->
+        <div class="rank-up-animation" id="rank-up-animation">
+            <div class="rank-up-content">
+                <h2 class="rank-up-title">Rank Achieved!</h2>
+                <div class="rank-up-rank" id="new-rank-display"></div>
+                <p>Continue your cultivation journey</p>
             </div>
-            <div class="site-title">Upper</div>
-            <div class="user-count" id="userCount">400+ Seekers</div>
         </div>
 
-        <!-- Dashboard -->
         <div class="container">
-            <div class="grid">
-                <!-- Main Content -->
-                <div>
-                    <!-- Header -->
-                    <div class="glass" style="padding: 1.75rem; margin-bottom: 1.5rem;">
-                        <h2 id="welcomeMessage" style="margin-bottom: 0.5rem;"></h2>
-                        <div style="margin-top: 1.25rem;">
-                            <button class="btn" id="setDateBtn">
-                                <span class="material-icons">schedule</span>
-                                Deadline
-                            </button>
+            <header>
+                <div class="logo">
+                    <i class="fas fa-moon logo-icon"></i>
+                    <h1 class="logo-text">Lunar Path</h1>
+                </div>
+                <div class="energy-system">
+                    <span class="user-name" id="user-name-display"></span>
+                    <div class="rank-badge" id="rank-badge">
+                        <i class="fas fa-seedling badge-icon"></i>
+                        <span id="energy-rank">Novice</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <span class="energy-value" id="energy-value">0</span>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <!-- Timer Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Study Timer</h2>
+                        <i class="fas fa-hourglass-half card-icon"></i>
+                    </div>
+                    <div class="timer-display" id="timer-display">25:00</div>
+                    <div class="timer-controls">
+                        <button class="btn btn-primary" id="start-btn">Start Session</button>
+                        <button class="btn btn-secondary" id="pause-btn">Pause</button>
+                        <button class="btn btn-secondary" id="reset-btn">Reset</button>
+                    </div>
+                    <div class="timer-settings">
+                        <div class="setting-group">
+                            <label class="setting-label">Focus (min)</label>
+                            <input type="number" class="setting-input" id="work-duration" value="25" min="1" max="60">
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Break (min)</label>
+                            <input type="number" class="setting-input" id="break-duration" value="5" min="1" max="30">
                         </div>
                     </div>
+                </div>
 
-                    <!-- Timeline -->
-                    <div class="glass timeline-container">
-                        <h3 style="margin-bottom: 0.5rem;">Timeline</h3>
-                        <p style="opacity: 0.8; font-size: 0.95rem; margin-bottom: 1rem;" id="timelineDescription">
-                            Your voyage begins at the surface. Each circle represents a depth level.
-                        </p>
-                        <div class="calendar-grid" id="timeline"></div>
+                <!-- Task Manager -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Study Tasks</h2>
+                        <i class="fas fa-scroll card-icon"></i>
                     </div>
-
-                    <!-- Quote -->
-                    <div class="quote-container glass" id="appQuote">
-                        "In the deep, time moves differently - measure your progress by depth, not days"
+                    <div class="task-input-container">
+                        <div class="task-input">
+                            <input type="text" class="task-input-field" id="task-input" placeholder="Add a new study task...">
+                            <button class="btn btn-primary" id="add-task-btn">Add Task</button>
+                        </div>
+                        <ul class="task-list" id="task-list">
+                            <!-- Tasks will be added here dynamically -->
+                        </ul>
                     </div>
                 </div>
+
+                <!-- Stats Card -->
+                <div class="card stats-card">
+                    <div class="stat-item">
+                        <div class="stat-value" id="sessions-completed">0</div>
+                        <div class="stat-label">Sessions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="tasks-completed">0</div>
+                        <div class="stat-label">Tasks Completed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-energy">0</div>
+                        <div class="stat-label">Total Energy</div>
+                    </div>
+                </div>
+
+                <!-- Hours Tracker -->
+                <div class="hours-tracker">
+                    <i class="fas fa-clock hours-icon"></i>
+                    <span>Total Study Time: <span id="total-hours">0h 0m</span></span>
+                </div>
+            </main>
+
+            <footer>
+                <p class="footer-text">All rights reserved © <span class="developer-credit">by Moaz In Dawn</span></p>
+            </footer>
+        </div>
+    </div>
+<script>
+    // User Data Management
+    let userDatabase = JSON.parse(localStorage.getItem('lunarPathUsers')) || {};
+    let currentUser = localStorage.getItem('currentUser') || null;
+    
+    // App State Variables
+    let timeLeft = 25 * 60;
+    let isRunning = false;
+    let timerId = null;
+    let isWorkSession = true;
+    let totalSessions = 0;
+    let tasksCompleted = 0;
+    let energy = 0;
+    let totalStudySeconds = 0;
+    let currentRankIndex = 0;
+
+    // Rank System
+    const cultivationRanks = [
+        { threshold: 0, name: "Novice", icon: "seedling" },
+        { threshold: 50, name: "Apprentice", icon: "leaf" },
+        { threshold: 100, name: "Scholar", icon: "book" },
+        { threshold: 150, name: "Adept", icon: "graduation-cap" },
+        { threshold: 250, name: "Expert", icon: "lightbulb" },
+        { threshold: 400, name: "Master", icon: "crown" },
+        { threshold: 600, name: "Sage", icon: "hat-wizard" },
+        { threshold: 800, name: "Archmage", icon: "magic" },
+        { threshold: 1000, name: "Luminary", icon: "sun" },
+        { threshold: 1250, name: "Elder", icon: "mountain" },
+        { threshold: 1500, name: "Upper", icon: "infinity" }
+    ];
+
+    // DOM Elements
+    const loginContainer = document.getElementById('login-container');
+    const appContainer = document.getElementById('app-container');
+    const usernameInput = document.getElementById('username-input');
+    const beginJourneyBtn = document.getElementById('begin-journey-btn');
+    const loginMessage = document.getElementById('login-message');
+    const userNameDisplay = document.getElementById('user-name-display');
+    const startBtn = document.getElementById('start-btn');
+    const pauseBtn = document.getElementById('pause-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const workDurationInput = document.getElementById('work-duration');
+    const breakDurationInput = document.getElementById('break-duration');
+    const taskInput = document.getElementById('task-input');
+    const taskList = document.getElementById('task-list');
+    const addTaskBtn = document.getElementById('add-task-btn');
+    const energyValue = document.getElementById('energy-value');
+    const sessionsCompletedEl = document.getElementById('sessions-completed');
+    const tasksCompletedEl = document.getElementById('tasks-completed');
+    const totalEnergyEl = document.getElementById('total-energy');
+    const totalHoursDisplay = document.getElementById('total-hours');
+    const progressBar = document.getElementById('progress-bar');
+    const rankUpAnimation = document.getElementById('rank-up-animation');
+    const newRankDisplay = document.getElementById('new-rank-display');
+    const rankModal = document.getElementById('rank-modal');
+    const rankList = document.getElementById('rank-list');
+
+    // Initialize the app
+    function init() {
+        setupEventListeners();
+        
+        if (currentUser && userDatabase[currentUser]) {
+            showMainApp();
+        } else {
+            showLoginPage();
+        }
+    }
+
+    // Show login page
+    function showLoginPage() {
+        loginContainer.style.display = 'flex';
+        appContainer.style.display = 'none';
+    }
+
+    // Show main application
+    function showMainApp() {
+        loginContainer.style.display = 'none';
+        appContainer.style.display = 'flex';
+        
+        // Initialize UI
+        userNameDisplay.textContent = currentUser;
+        createStars();
+        loadUserData();
+        updateUI();
+    }
+
+    // Handle login/registration
+    function handleBeginJourney() {
+        const username = usernameInput.value.trim();
+        
+        if (!username) {
+            showLoginMessage('Please enter a username!', 'error');
+            return;
+        }
+        
+        if (userDatabase[username]) {
+            showLoginMessage('Username already exists!', 'error');
+            return;
+        }
+        
+        // Create new user
+        userDatabase[username] = {
+            energy: 0,
+            tasks: [],
+            totalSessions: 0,
+            tasksCompleted: 0,
+            totalStudySeconds: 0,
+            currentRankIndex: 0
+        };
+        
+        currentUser = username;
+        localStorage.setItem('lunarPathUsers', JSON.stringify(userDatabase));
+        localStorage.setItem('currentUser', currentUser);
+        
+        showMainApp();
+    }
+
+    // Load user data
+    function loadUserData() {
+        if (!currentUser || !userDatabase[currentUser]) return;
+        
+        const userData = userDatabase[currentUser];
+        energy = userData.energy || 0;
+        totalSessions = userData.totalSessions || 0;
+        tasksCompleted = userData.tasksCompleted || 0;
+        totalStudySeconds = userData.totalStudySeconds || 0;
+        currentRankIndex = userData.currentRankIndex || 0;
+        
+        // Load tasks
+        taskList.innerHTML = '';
+        if (userData.tasks) {
+            userData.tasks.forEach(task => {
+                addTaskToDOM(task.text, task.completed);
+            });
+        }
+    }
+
+    // Save user data
+    function saveUserData() {
+        if (!currentUser) return;
+        
+        userDatabase[currentUser] = {
+            energy,
+            tasks: getTasksData(),
+            totalSessions,
+            tasksCompleted,
+            totalStudySeconds,
+            currentRankIndex
+        };
+        
+        localStorage.setItem('lunarPathUsers', JSON.stringify(userDatabase));
+        localStorage.setItem('currentUser', currentUser);
+    }
+
+    // Get tasks data for saving
+    function getTasksData() {
+        return Array.from(taskList.children).map(task => ({
+            text: task.querySelector('.task-text').textContent,
+            completed: task.classList.contains('completed')
+        }));
+    }
+
+    // Add task to DOM
+    function addTaskToDOM(text, completed = false) {
+        const taskItem = document.createElement('li');
+        taskItem.className = `task-item ${completed ? 'completed' : ''}`;
+        taskItem.innerHTML = `
+            <span class="task-text">${text}</span>
+            <div class="task-actions">
+                <button class="task-btn complete-btn"><i class="fas fa-check"></i></button>
+                <button class="task-btn delete-btn"><i class="fas fa-trash"></i></button>
             </div>
-        </div>
+        `;
 
-        <!-- Social Links -->
-        <div class="social-links">
-            <a href="https://youtube.com/@moaznou?si=YfOI3v1Jeu0MV4QC" class="social-link" target="_blank" aria-label="YouTube Channel">
-                <span class="material-icons">play_arrow</span>
-            </a>
-            <a href="https://t.me/Master3rdSecondary" class="social-link" target="_blank" aria-label="Telegram Channel">
-                <span class="material-icons">send</span>
-            </a>
-        </div>
-    </main>
-
-    <script>
-        class AbyssalVoyager {
-            static user = {
-                name: '',
-                targetDate: null,
-                lastActiveDate: null
-            };
-
-            static quotes = [
-                "I don’t wait for opportunities. I create chaos and call it a plan.",
-                "Pressure creates diamonds",
-                "While they talk, I work. While they sleep, I rise.",
-                "Calm outside. Storm inside. Results everywhere.",
-                "My goals don’t care how I feel. And neither do I.",
-                "They laugh until I make it. Then they copy.",
-                "Most people quit when it’s hard. I start there.",
-                "Discipline over mood. Every damn time.",
-                "Your comfort zone is killing you slowly. I chose war.",
-                "Legends aren’t born. They’re built in chaos."
-            ];
-
-            static init() {
-                this.setupEventListeners();
-                this.loadData();
-                if (this.user.name) this.showPath();
-                this.updateUserCountDisplay();
-                this.displayRandomQuote();
-                document.getElementById('username').focus();
+        // Delete task event
+        taskItem.querySelector('.delete-btn').addEventListener('click', () => {
+            if (taskItem.classList.contains('completed')) {
+                tasksCompleted--;
+                energy -= 5;
+                updateStats();
             }
+            taskItem.remove();
+            saveUserData();
+        });
 
-            static setupEventListeners() {
-                document.getElementById('beginBtn').addEventListener('click', () => this.beginJourney());
-                document.getElementById('setDateBtn').addEventListener('click', () => this.setTargetDate());
-                document.getElementById('username').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.beginJourney();
-                });
+        // Complete task event
+        taskItem.querySelector('.complete-btn').addEventListener('click', () => {
+            const wasCompleted = taskItem.classList.contains('completed');
+            taskItem.classList.toggle('completed');
+            
+            if (!wasCompleted) {
+                energy += 5;
+                tasksCompleted++;
+                showEnergyNotification('+5 Energy Gained!');
+            } else {
+                energy -= 5;
+                tasksCompleted--;
+                showEnergyNotification('-5 Energy Lost!');
             }
+            
+            updateStats();
+            updateRank();
+            saveUserData();
+        });
 
-            static loadData() {
-                const data = localStorage.getItem('abyssalPath');
-                if (data) {
-                    try {
-                        const saved = JSON.parse(data);
-                        this.user.name = saved.name || '';
-                        this.user.targetDate = saved.targetDate ? new Date(saved.targetDate) : null;
-                        this.user.lastActiveDate = saved.lastActiveDate ? new Date(saved.lastActiveDate) : null;
-                    } catch (e) {
-                        console.error("Failed to load data", e);
-                    }
-                }
-            }
+        taskList.appendChild(taskItem);
+    }
 
-            static saveData() {
-                this.user.lastActiveDate = new Date();
-                localStorage.setItem('abyssalPath', JSON.stringify({
-                    ...this.user,
-                    targetDate: this.user.targetDate?.toISOString(),
-                    lastActiveDate: this.user.lastActiveDate.toISOString()
-                }));
-            }
+    // Update UI elements
+    function updateUI() {
+        updateStats();
+        updateRank();
+        updateStudyTime();
+        updateTimerDisplay();
+    }
 
-            static beginJourney() {
-                const name = document.getElementById('username').value.trim();
-                if (name) {
-                    this.user.name = name;
-                    this.incrementUserCount();
-                    this.showPath();
-                    this.saveData();
-                } else {
-                    document.getElementById('username').focus();
-                }
-            }
+    // Update statistics display
+    function updateStats() {
+        sessionsCompletedEl.textContent = totalSessions;
+        tasksCompletedEl.textContent = tasksCompleted;
+        totalEnergyEl.textContent = energy;
+        energyValue.textContent = energy;
+    }
 
-            static incrementUserCount() {
-                let count = parseInt(localStorage.getItem('userCount')) || 400;
-                count += 1;
-                localStorage.setItem('userCount', count);
-                this.updateUserCountDisplay();
-            }
-
-            static updateUserCountDisplay() {
-                const count = parseInt(localStorage.getItem('userCount')) || 400;
-                document.getElementById('userCount').textContent = `${count}+ Seekers`;
-            }
-
-            static showPath() {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'block';
-                document.getElementById('welcomeMessage').textContent = `${this.user.name}'s Journey`;
-                this.updateTimeline();
-            }
-
-            static setTargetDate() {
-                const picker = document.createElement('input');
-                picker.type = 'date';
-                picker.min = new Date().toISOString().split('T')[0];
-                picker.onchange = (e) => {
-                    this.user.targetDate = new Date(e.target.value);
-                    this.updateTimeline();
-                    this.saveData();
-                };
-                picker.showPicker();
-            }
-
-            static updateTimeline() {
-                if (!this.user.targetDate) {
-                    document.getElementById('timeline').innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 1rem;">Chart your course to begin</div>';
-                    document.getElementById('timelineDescription').textContent = 'The abyss awaits your commitment';
-                    return;
-                }
-
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const target = new Date(this.user.targetDate);
-                target.setHours(0, 0, 0, 0);
-                
-                if (target < today) {
-                    document.getElementById('timeline').innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 1rem;">New depths await - set a new course</div>';
-                    document.getElementById('timelineDescription').textContent = 'The trench remembers your journey';
-                    return;
-                }
-
-                const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
-                document.getElementById('timelineDescription').textContent = 
-                    `${diffDays} Day until your turn comes`;
-
-                this.renderTimeline(diffDays);
-            }
-
-            static renderTimeline(days) {
-                const timeline = document.getElementById('timeline');
-                timeline.innerHTML = '';
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                
-                for (let day = 0; day < days; day++) {
-                    const date = new Date(today);
-                    date.setDate(today.getDate() + day);
-                    
-                    const dayElement = document.createElement('div');
-                    dayElement.className = `day-marker ${day === 0 ? 'today' : ''}`;
-                    dayElement.textContent = date.getDate();
-                    dayElement.title = `Depth Level: ${day + 1}\n${date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`;
-                    timeline.appendChild(dayElement);
-                }
-
-                const remainingCells = 7 - (days % 7);
-                if (remainingCells < 7) {
-                    for (let i = 0; i < remainingCells; i++) {
-                        timeline.appendChild(document.createElement('div')).style.visibility = 'hidden';
-                    }
-                }
-            }
-
-            static displayRandomQuote() {
-                const randomIndex = Math.floor(Math.random() * this.quotes.length);
-                const quote = this.quotes[randomIndex];
-                document.getElementById('appQuote').textContent = quote;
-                document.getElementById('dailyQuote').textContent = quote;
+    // Update rank display
+    function updateRank() {
+        let newRankIndex = 0;
+        for (let i = cultivationRanks.length - 1; i >= 0; i--) {
+            if (energy >= cultivationRanks[i].threshold) {
+                newRankIndex = i;
+                break;
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => AbyssalVoyager.init());
-    </script>
+        if (newRankIndex > currentRankIndex) {
+            currentRankIndex = newRankIndex;
+            showRankUpAnimation(cultivationRanks[currentRankIndex].name);
+        }
+
+        const currentRank = cultivationRanks[currentRankIndex];
+        const nextRank = cultivationRanks[currentRankIndex + 1] || cultivationRanks[currentRankIndex];
+        
+        document.getElementById('rank-badge').innerHTML = `
+            <i class="fas fa-${currentRank.icon} badge-icon"></i>
+            <span>${currentRank.name}</span>
+        `;
+
+        const progress = nextRank ? 
+            ((energy - currentRank.threshold) / (nextRank.threshold - currentRank.threshold)) * 100 : 
+            100;
+        progressBar.style.width = `${Math.min(100, progress)}%`;
+    }
+
+    // Show rank up animation
+    function showRankUpAnimation(rankName) {
+        newRankDisplay.textContent = rankName;
+        rankUpAnimation.classList.add('show');
+        setTimeout(() => {
+            rankUpAnimation.classList.remove('show');
+        }, 3000);
+    }
+
+    // Show ranks modal
+    function showRanks() {
+        rankList.innerHTML = cultivationRanks.map((rank, index) => `
+            <li class="rank-item ${index === currentRankIndex ? 'current' : ''}">
+                ${rank.name} - ${rank.threshold} Energy
+            </li>
+        `).join('');
+        rankModal.classList.add('show');
+    }
+
+    // Timer functions
+    function toggleTimer() {
+        if (!isRunning) {
+            isRunning = true;
+            startBtn.textContent = 'Stop Session';
+            timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
+            updateTimerDisplay();
+            timerId = setInterval(updateTimer, 1000);
+        } else {
+            resetTimer();
+        }
+    }
+
+    function pauseTimer() {
+        if (!isRunning) return;
+        
+        isRunning = false;
+        clearInterval(timerId);
+        startBtn.textContent = 'Resume Session';
+    }
+
+    function resetTimer() {
+        isRunning = false;
+        clearInterval(timerId);
+        timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
+        updateTimerDisplay();
+        startBtn.textContent = 'Start Session';
+    }
+
+    function updateTimer() {
+        timeLeft--;
+        
+        if (isWorkSession) {
+            totalStudySeconds++;
+            updateStudyTime();
+        }
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerId);
+            handleSessionComplete();
+        }
+        
+        updateTimerDisplay();
+    }
+
+    function handleSessionComplete() {
+        if (isWorkSession) {
+            totalSessions++;
+            energy += 10;
+            updateStats();
+            updateRank();
+            saveUserData();
+        }
+        
+        isWorkSession = !isWorkSession;
+        timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
+        
+        if (isWorkSession) {
+            startBtn.textContent = 'Start Session';
+            isRunning = false;
+        } else {
+            toggleTimer();
+        }
+    }
+
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+        const seconds = (timeLeft % 60).toString().padStart(2, '0');
+        document.getElementById('timer-display').textContent = `${minutes}:${seconds}`;
+    }
+
+    function updateStudyTime() {
+        const hours = Math.floor(totalStudySeconds / 3600);
+        const minutes = Math.floor((totalStudySeconds % 3600) / 60);
+        totalHoursDisplay.textContent = `${hours}h ${minutes}m`;
+    }
+
+    // Show energy notification
+    function showEnergyNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'notification energy-notification show';
+        notification.innerHTML = `
+            <div class="notification-title">
+                <i class="fas fa-bolt"></i>
+                ${message}
+            </div>
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    // Create stars background
+    function createStars() {
+        const container = document.getElementById('cosmic-bg');
+        container.innerHTML = '';
+        for (let i = 0; i < 200; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.setProperty('--duration', Math.random() * 3 + 2 + 's');
+            container.appendChild(star);
+        }
+    }
+
+    // Show login message
+    function showLoginMessage(msg, type) {
+        loginMessage.textContent = msg;
+        loginMessage.className = `login-message ${type}`;
+        setTimeout(() => {
+            loginMessage.textContent = '';
+            loginMessage.className = 'login-message';
+        }, 3000);
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+        // Begin Journey button
+        beginJourneyBtn.addEventListener('click', handleBeginJourney);
+        
+        // Timer controls
+        startBtn.addEventListener('click', toggleTimer);
+        pauseBtn.addEventListener('click', pauseTimer);
+        resetBtn.addEventListener('click', resetTimer);
+        
+        // Task controls
+        addTaskBtn.addEventListener('click', () => {
+            const taskText = taskInput.value.trim();
+            if (taskText) {
+                addTaskToDOM(taskText);
+                taskInput.value = '';
+                saveUserData();
+            }
+        });
+
+        taskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const taskText = taskInput.value.trim();
+                if (taskText) {
+                    addTaskToDOM(taskText);
+                    taskInput.value = '';
+                    saveUserData();
+                }
+            }
+        });
+
+        // Rank display
+        document.getElementById('rank-badge').addEventListener('click', showRanks);
+        
+        // Close rank modal
+        window.addEventListener('click', (e) => {
+            if (e.target === rankModal) rankModal.classList.remove('show');
+        });
+
+        // Work duration change
+        workDurationInput.addEventListener('input', () => {
+            if (!isRunning) {
+                timeLeft = workDurationInput.value * 60;
+                updateTimerDisplay();
+            }
+        });
+    }
+
+    // Initialize the app
+    init();
+</script>
 </body>
 </html>
