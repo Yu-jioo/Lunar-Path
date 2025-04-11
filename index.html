@@ -6,6 +6,11 @@
     <title>Lunar Path</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* أضف هذا في بداية قسم ال style */
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
         /* Previous CSS styles remain unchanged */
         :root {
             --void-black: #0a0a12;
@@ -19,7 +24,7 @@
             --star-dust: rgba(124, 58, 237, 0.3);
         }
 
-        /* الأنماط الأصلية تبقى كما هي */
+        /* Original styles remain the same */
         
         * {
             margin: 0;
@@ -140,7 +145,7 @@
             background: var(--starlight);
             border-radius: 50%;
             opacity: 0.8;
-            animation: twinkle var(--duration) infinite ease-in-out;
+    animation: twinkle var(--duration) infinite cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes twinkle {
@@ -209,8 +214,9 @@
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.2), transparent);
             transform: translateX(-100%);
-            animation: energyFlow 3s infinite;
-        }
+            animation: energyFlow 3s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+        
 
         @keyframes energyFlow {
             100% { transform: translateX(100%); }
@@ -287,7 +293,8 @@
             backdrop-filter: blur(12px);
             border: 1px solid rgba(56, 189, 248, 0.2);
             box-shadow: 0 10px 30px rgba(2, 6, 23, 0.5);
-            transition: all 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow;
             position: relative;
             overflow: hidden;
         }
@@ -356,7 +363,7 @@
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
             z-index: 1;
@@ -486,7 +493,9 @@
             border-radius: 8px;
             margin-bottom: 1rem;
             border-left: 4px solid var(--moon-purple);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+               opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
             position: relative;
             overflow: hidden;
         }
@@ -1255,12 +1264,160 @@
         font-size: 1.4rem;
     }
 }
+
+/* New UI Improvements */
+.timer-display {
+    position: relative;
+}
+
+.timer-display::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--celestial-blue), transparent);
+    opacity: 0.5;
+}
+
+.timer-session-type {
+    text-align: center;
+    margin-top: -1rem;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: var(--moon-purple);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.task-input-field {
+    transition: all 0.3s ease, box-shadow 0.3s ease;
+}
+
+.task-input-field:focus {
+    transform: translateY(-2px);
+}
+
+.btn {
+    transition: all 0.3s ease, transform 0.2s ease;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+/* Persistent timer indicator */
+.persistent-timer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--celestial-blue);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--celestial-blue);
+    box-shadow: 0 0 20px var(--moon-glow);
+    z-index: 100;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.persistent-timer:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px var(--moon-glow);
+}
+
+/* Tooltip styles */
+.tooltip {
+    position: relative;
+}
+
+.tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.9);
+    color: var(--starlight);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid var(--celestial-blue);
+    z-index: 10;
+}
+
+.tooltip:hover::after {
+    opacity: 1;
+    visibility: visible;
+    bottom: calc(100% + 10px);
+}
+
+/* Focus mode animation */
+@keyframes focusPulse {
+    0%, 100% { box-shadow: 0 0 10px var(--moon-glow); }
+    50% { box-shadow: 0 0 30px var(--moon-glow); }
+}
+
+.focus-mode {
+    animation: focusPulse 2s infinite;
+}
+
+/* Improved task completion animation */
+@keyframes taskComplete {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0.5); opacity: 0; }
+}
+
+.task-complete-animation {
+    animation: taskComplete 0.3s forwards;
+}
+
+/* Session complete celebration */
+@keyframes confetti {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: var(--celestial-blue);
+    opacity: 0;
+    z-index: 9999;
+    animation: confetti 3s ease-out forwards;
+}
         
+        /* أضف في نهاية قسم ال CSS */
+.persistent-timer {
+    will-change: transform, opacity;
+}
+
+.notification {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform;
+}
+
+.confetti {
+    animation: confetti 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
     </style>
 </head>
 <body>
-    <!-- Previous HTML remains unchanged -->
-
     <!-- Login Page -->
     <div class="login-container" id="login-container">
         <div class="login-box">
@@ -1282,18 +1439,17 @@
         </div>
     </div>
 
-
     <!-- Main App -->
     <div class="app-container" id="app-container">
         <div class="cosmic-bg" id="cosmic-bg"></div>
         
         <div class="container">
             <header>
-                <!-- Header content remains unchanged -->                <div class="logo">
+                <div class="logo">
                     <i class="fas fa-moon logo-icon"></i>
                     <h1 class="logo-text">Lunar Path</h1>
                 </div>
-                <div class="energy-system">
+                <div class="energy-system tooltip" data-tooltip="Click to view ranks">
                     <span class="user-name" id="user-name-display"></span>
                     <div class="rank-badge" id="rank-badge">
                         <i class="fas fa-seedling badge-icon"></i>
@@ -1307,13 +1463,14 @@
             </header>
 
             <main class="main-content">
-                <!-- Timer Card remains unchanged -->                <!-- Timer Card -->
+                <!-- Timer Card -->
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Study Timer</h2>
                         <i class="fas fa-hourglass-half card-icon"></i>
                     </div>
                     <div class="timer-display" id="timer-display">25:00</div>
+                    <div class="timer-session-type" id="session-type">Focus Session</div>
                     <div class="timer-controls">
                         <button class="btn btn-primary" id="start-btn">Start Session</button>
                         <button class="btn btn-secondary" id="pause-btn">Pause</button>
@@ -1330,7 +1487,6 @@
                         </div>
                     </div>
                 </div>
-
 
                 <!-- New Study Time Card -->
                 <div class="card study-time-card">
@@ -1356,7 +1512,7 @@
                     </div>
                 </div>
 
-                <!-- Previous Task Manager and Stats Cards remain unchanged -->                <!-- Task Manager -->
+                <!-- Task Manager -->
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Study Tasks</h2>
@@ -1388,14 +1544,16 @@
                         <div class="stat-label">Total Energy</div>
                     </div>
                 </div>
-
             </main>
 
             <footer>
-                <!-- Footer remains unchanged -->                <p class="footer-text">All rights reserved © <span class="developer-credit">by Moaz In Dawn</span></p>
+                <p class="footer-text">All rights reserved © <span class="developer-credit">by Moaz In Dawn</span></p>
             </footer>
         </div>
     </div>
+
+    <!-- Persistent Timer Indicator -->
+    <div class="persistent-timer" id="persistent-timer" style="display: none;"></div>
 
     <script>
 // User Data Management
@@ -1413,6 +1571,8 @@ let energy = 0;
 let totalStudySeconds = 0;
 let currentRankIndex = 0;
 let examDate = null;
+let lastUpdateTime = Date.now();
+let timerEndTime = null;
 
 // Rank System
 const cultivationRanks = [
@@ -1453,14 +1613,28 @@ const progressBar = document.getElementById('progress-bar');
 const examDateInput = document.getElementById('exam-date-input');
 const calendarGrid = document.getElementById('calendar-grid');
 const daysRemainingEl = document.getElementById('days-remaining');
-document.getElementById('rank-badge').addEventListener('click', () => {
-    updateRankList();
-    document.getElementById('rank-modal').classList.add('show');
-});
+const sessionTypeEl = document.getElementById('session-type');
+const persistentTimer = document.getElementById('persistent-timer');
 
 // Initialize the app
 function init() {
     setupEventListeners();
+    
+    // Check for active timer from previous session
+    const savedTimer = JSON.parse(localStorage.getItem('lunarPathActiveTimer'));
+    if (savedTimer && savedTimer.endTime > Date.now()) {
+        timerEndTime = savedTimer.endTime;
+        timeLeft = Math.ceil((timerEndTime - Date.now()) / 1000);
+        isWorkSession = savedTimer.isWorkSession;
+        isRunning = true;
+        
+        if (timeLeft > 0) {
+            startTimer();
+            showPersistentTimer();
+        } else {
+            handleSessionComplete();
+        }
+    }
     
     if (currentUser && userDatabase[currentUser]) {
         showMainApp();
@@ -1560,6 +1734,18 @@ function saveUserData() {
     localStorage.setItem('currentUser', currentUser);
 }
 
+// Save active timer data
+function saveTimerData() {
+    if (isRunning && timerEndTime) {
+        localStorage.setItem('lunarPathActiveTimer', JSON.stringify({
+            endTime: timerEndTime,
+            isWorkSession
+        }));
+    } else {
+        localStorage.removeItem('lunarPathActiveTimer');
+    }
+}
+
 function saveExamDate() {
     if (currentUser && examDate) {
         userDatabase[currentUser].examDate = examDate.getTime();
@@ -1595,7 +1781,7 @@ function addTaskToDOM(text) {
     });
 
     taskItem.querySelector('.complete-btn').addEventListener('click', () => {
-        taskItem.classList.add('fade-out');
+        taskItem.classList.add('task-complete-animation');
         
         setTimeout(() => {
             taskItem.remove();
@@ -1618,6 +1804,7 @@ function updateUI() {
     updateStudyTime();
     updateTimerDisplay();
     updateExamCalendar();
+    updateSessionTypeDisplay();
 }
 
 // Update statistics display
@@ -1743,14 +1930,25 @@ function generateCalendarCircles(totalDays) {
 // Timer functions
 function toggleTimer() {
     if (!isRunning) {
-        isRunning = true;
-        startBtn.textContent = 'Stop Session';
-        timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
-        updateTimerDisplay();
-        timerId = setInterval(updateTimer, 1000);
+        startTimer();
     } else {
         resetTimer();
     }
+}
+
+function startTimer() {
+    isRunning = true;
+    startBtn.textContent = 'Stop Session';
+    timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
+    timerEndTime = Date.now() + timeLeft * 1000;
+    updateTimerDisplay();
+    updateSessionTypeDisplay();
+    timerId = setInterval(updateTimer, 1000);
+    saveTimerData();
+    showPersistentTimer();
+    
+    // Add focus mode visual feedback
+    document.getElementById('timer-display').classList.add('focus-mode');
 }
 
 function pauseTimer() {
@@ -1759,6 +1957,10 @@ function pauseTimer() {
     isRunning = false;
     clearInterval(timerId);
     startBtn.textContent = 'Resume Session';
+    saveTimerData();
+    
+    // Remove focus mode visual feedback
+    document.getElementById('timer-display').classList.remove('focus-mode');
 }
 
 function resetTimer() {
@@ -1767,25 +1969,42 @@ function resetTimer() {
     timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
     updateTimerDisplay();
     startBtn.textContent = 'Start Session';
+    timerEndTime = null;
+    saveTimerData();
+    hidePersistentTimer();
+    
+    // Remove focus mode visual feedback
+    document.getElementById('timer-display').classList.remove('focus-mode');
 }
 
+// عدل دالة updateTimer لتكون هكذا
 function updateTimer() {
-    timeLeft--;
-    
-    if (isWorkSession) {
-        totalStudySeconds++;
-        updateStudyTime();
-    }
-    
-    if (timeLeft <= 0) {
-        clearInterval(timerId);
-        handleSessionComplete();
-    }
-    
-    updateTimerDisplay();
+    requestAnimationFrame(() => {
+        const now = Date.now();
+        const delta = Math.floor((now - lastUpdateTime) / 1000);
+        lastUpdateTime = now;
+        
+        timeLeft = Math.max(0, Math.ceil((timerEndTime - now) / 1000));
+        
+        if (isWorkSession) {
+            totalStudySeconds += delta;
+            updateStudyTime();
+        }
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerId);
+            handleSessionComplete();
+        }
+        
+        updateTimerDisplay();
+        updatePersistentTimer();
+    });
 }
 
 function handleSessionComplete() {
+    // Create celebration confetti
+    createConfetti();
+    
     if (isWorkSession) {
         totalSessions++;
         energy += 10;
@@ -1796,13 +2015,17 @@ function handleSessionComplete() {
     
     isWorkSession = !isWorkSession;
     timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
+    timerEndTime = Date.now() + timeLeft * 1000;
     
     if (isWorkSession) {
         startBtn.textContent = 'Start Session';
         isRunning = false;
+        saveTimerData();
     } else {
-        toggleTimer();
+        startTimer();
     }
+    
+    updateSessionTypeDisplay();
 }
 
 function updateTimerDisplay() {
@@ -1811,10 +2034,53 @@ function updateTimerDisplay() {
     document.getElementById('timer-display').textContent = `${minutes}:${seconds}`;
 }
 
+function updateSessionTypeDisplay() {
+    sessionTypeEl.textContent = isWorkSession ? 'Focus Session' : 'Break Time';
+    sessionTypeEl.style.color = isWorkSession ? 'var(--moon-purple)' : 'var(--celestial-blue)';
+}
+
 function updateStudyTime() {
     const hours = Math.floor(totalStudySeconds / 3600);
     const minutes = Math.floor((totalStudySeconds % 3600) / 60);
     totalHoursDisplay.textContent = `${hours}h ${minutes}m`;
+}
+
+// Persistent timer functions
+function showPersistentTimer() {
+    persistentTimer.style.display = 'flex';
+    updatePersistentTimer();
+}
+
+function hidePersistentTimer() {
+    persistentTimer.style.display = 'none';
+}
+
+function updatePersistentTimer() {
+    if (!isRunning) return;
+    
+    const minutes = Math.floor(timeLeft / 60);
+    persistentTimer.textContent = minutes;
+    persistentTimer.title = `${minutes}m ${timeLeft % 60}s remaining`;
+}
+
+// Create celebration confetti
+function createConfetti() {
+    const colors = ['#38bdf8', '#7c3aed', '#ffffff', '#e2e8f0'];
+    
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = `${Math.random() * 100}vw`;
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.width = `${Math.random() * 10 + 5}px`;
+        confetti.style.height = `${Math.random() * 10 + 5}px`;
+        confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => {
+            confetti.remove();
+        }, 3000);
+    }
 }
 
 // Show energy notification
@@ -1901,6 +2167,19 @@ function setupEventListeners() {
             timeLeft = workDurationInput.value * 60;
             updateTimerDisplay();
         }
+    });
+
+    // Persistent timer click event
+    persistentTimer.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    // Save timer data when page is about to unload
+    window.addEventListener('beforeunload', () => {
+        saveTimerData();
     });
 }
 
