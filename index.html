@@ -1469,7 +1469,7 @@ html {
                         <h2 class="card-title">Study Timer</h2>
                         <i class="fas fa-hourglass-half card-icon"></i>
                     </div>
-                    <div class="timer-display" id="timer-display">25:00</div>
+                    <div class="timer-display" id="timer-display">80:00</div>
                     <div class="timer-session-type" id="session-type">Focus Session</div>
                     <div class="timer-controls">
                         <button class="btn btn-primary" id="start-btn">Start Session</button>
@@ -1479,7 +1479,7 @@ html {
                     <div class="timer-settings">
                         <div class="setting-group">
                             <label class="setting-label">Focus (min)</label>
-                            <input type="number" class="setting-input" id="work-duration" value="25" min="1" max="60">
+                            <input type="number" class="setting-input" id="work-duration" value="80" min="1" max="60">
                         </div>
                         <div class="setting-group">
                             <label class="setting-label">Break (min)</label>
@@ -1561,7 +1561,7 @@ let userDatabase = JSON.parse(localStorage.getItem('lunarPathUsers')) || {};
 let currentUser = localStorage.getItem('currentUser') || null;
 
 // App State Variables
-let timeLeft = 25 * 60;
+let timeLeft = 80 * 60;
 let isRunning = false;
 let timerId = null;
 let isWorkSession = true;
@@ -1571,8 +1571,9 @@ let energy = 0;
 let totalStudySeconds = 0;
 let currentRankIndex = 0;
 let examDate = null;
-let lastUpdateTime = Date.now();
 let timerEndTime = null;
+let initialWorkDuration = 80;
+let initialBreakDuration = 5;
 
 // Rank System
 const cultivationRanks = [
@@ -1616,25 +1617,63 @@ const daysRemainingEl = document.getElementById('days-remaining');
 const sessionTypeEl = document.getElementById('session-type');
 const persistentTimer = document.getElementById('persistent-timer');
 
+// Timer persistence system
+const TIMER_DATA_KEY = 'lunar_timer_data';
+
+function saveTimerState() {
+    const timerData = {
+        endTime: timerEndTime,
+        isWorkSession,
+        totalStudySeconds,
+        isRunning,
+        initialWorkDuration,
+        initialBreakDuration
+    };
+    localStorage.setItem(TIMER_DATA_KEY, JSON.stringify(timerData));
+}
+
+function loadTimerState() {
+    const savedData = JSON.parse(localStorage.getItem(TIMER_DATA_KEY));
+    if (savedData) {
+        const now = Date.now();
+        
+        if (savedData.endTime > now) {
+            timerEndTime = savedData.endTime;
+            isWorkSession = savedData.isWorkSession;
+            totalStudySeconds = savedData.totalStudySeconds;
+            isRunning = savedData.isRunning;
+            initialWorkDuration = savedData.initialWorkDuration;
+            initialBreakDuration = savedData.initialBreakDuration;
+            
+            if (isRunning) {
+                timeLeft = Math.ceil((timerEndTime - now) / 1000);
+                startTimer();
+            }
+        } else if (savedData.isRunning) {
+            handlePostClosedCompletion(savedData);
+        }
+    }
+}
+
+function handlePostClosedCompletion(savedData) {
+    if (savedData.isWorkSession) {
+        totalStudySeconds += savedData.initialWorkDuration * 60;
+        totalSessions++;
+        energy += 10;
+        showCompletionNotification('Focus session completed! +10 Energy');
+    } else {
+        showCompletionNotification('Break session completed!');
+    }
+    
+    saveUserData();
+    updateUI();
+    localStorage.removeItem(TIMER_DATA_KEY);
+}
+
 // Initialize the app
 function init() {
     setupEventListeners();
-    
-    // Check for active timer from previous session
-    const savedTimer = JSON.parse(localStorage.getItem('lunarPathActiveTimer'));
-    if (savedTimer && savedTimer.endTime > Date.now()) {
-        timerEndTime = savedTimer.endTime;
-        timeLeft = Math.ceil((timerEndTime - Date.now()) / 1000);
-        isWorkSession = savedTimer.isWorkSession;
-        isRunning = true;
-        
-        if (timeLeft > 0) {
-            startTimer();
-            showPersistentTimer();
-        } else {
-            handleSessionComplete();
-        }
-    }
+    loadTimerState();
     
     if (currentUser && userDatabase[currentUser]) {
         showMainApp();
@@ -1732,18 +1771,6 @@ function saveUserData() {
     
     localStorage.setItem('lunarPathUsers', JSON.stringify(userDatabase));
     localStorage.setItem('currentUser', currentUser);
-}
-
-// Save active timer data
-function saveTimerData() {
-    if (isRunning && timerEndTime) {
-        localStorage.setItem('lunarPathActiveTimer', JSON.stringify({
-            endTime: timerEndTime,
-            isWorkSession
-        }));
-    } else {
-        localStorage.removeItem('lunarPathActiveTimer');
-    }
 }
 
 function saveExamDate() {
@@ -1939,15 +1966,34 @@ function toggleTimer() {
 function startTimer() {
     isRunning = true;
     startBtn.textContent = 'Stop Session';
-    timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
-    timerEndTime = Date.now() + timeLeft * 1000;
-    updateTimerDisplay();
-    updateSessionTypeDisplay();
-    timerId = setInterval(updateTimer, 1000);
-    saveTimerData();
-    showPersistentTimer();
     
-    // Add focus mode visual feedback
+    // حفظ المدة الأولية عند البدء
+    if (isWorkSession) {
+        initialWorkDuration = parseInt(workDurationInput.value);
+    } else {
+        initialBreakDuration = parseInt(breakDurationInput.value);
+    }
+    
+    if (!timerEndTime) {
+        timeLeft = (isWorkSession ? initialWorkDuration : initialBreakDuration) * 60;
+        timerEndTime = Date.now() + timeLeft * 1000;
+    }
+    
+    timerId = setInterval(() => {
+        const now = Date.now();
+        timeLeft = Math.ceil((timerEndTime - now) / 1000);
+        
+        if (timeLeft <= 0) {
+            handleSessionComplete();
+        }
+        
+        updateTimerDisplay();
+        updatePersistentTimer();
+        saveTimerState();
+    }, 1000);
+    
+    saveTimerState();
+    showPersistentTimer();
     document.getElementById('timer-display').classList.add('focus-mode');
 }
 
@@ -1957,75 +2003,55 @@ function pauseTimer() {
     isRunning = false;
     clearInterval(timerId);
     startBtn.textContent = 'Resume Session';
-    saveTimerData();
-    
-    // Remove focus mode visual feedback
+    saveTimerState();
     document.getElementById('timer-display').classList.remove('focus-mode');
 }
 
 function resetTimer() {
     isRunning = false;
     clearInterval(timerId);
-    timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
+    timerEndTime = null;
+    timeLeft = (isWorkSession ? initialWorkDuration : initialBreakDuration) * 60;
     updateTimerDisplay();
     startBtn.textContent = 'Start Session';
-    timerEndTime = null;
-    saveTimerData();
-    hidePersistentTimer();
-    
-    // Remove focus mode visual feedback
+    localStorage.removeItem(TIMER_DATA_KEY);
     document.getElementById('timer-display').classList.remove('focus-mode');
 }
 
-// عدل دالة updateTimer لتكون هكذا
-function updateTimer() {
-    requestAnimationFrame(() => {
-        const now = Date.now();
-        const delta = Math.floor((now - lastUpdateTime) / 1000);
-        lastUpdateTime = now;
-        
-        timeLeft = Math.max(0, Math.ceil((timerEndTime - now) / 1000));
-        
-        if (isWorkSession) {
-            totalStudySeconds += delta;
-            updateStudyTime();
-        }
-        
-        if (timeLeft <= 0) {
-            clearInterval(timerId);
-            handleSessionComplete();
-        }
-        
-        updateTimerDisplay();
-        updatePersistentTimer();
-    });
-}
-
 function handleSessionComplete() {
-    // Create celebration confetti
+    clearInterval(timerId);
     createConfetti();
     
     if (isWorkSession) {
+        totalStudySeconds += initialWorkDuration * 60;
         totalSessions++;
         energy += 10;
-        updateStats();
-        updateRank();
-        saveUserData();
+        showCompletionNotification('Focus session completed! +10 Energy');
+    } else {
+        showCompletionNotification('Break session completed!');
     }
     
     isWorkSession = !isWorkSession;
-    timeLeft = (isWorkSession ? workDurationInput.value : breakDurationInput.value) * 60;
-    timerEndTime = Date.now() + timeLeft * 1000;
+    timerEndTime = null;
+    isRunning = false;
+    startBtn.textContent = 'Start Session';
     
-    if (isWorkSession) {
-        startBtn.textContent = 'Start Session';
-        isRunning = false;
-        saveTimerData();
-    } else {
-        startTimer();
-    }
-    
-    updateSessionTypeDisplay();
+    saveUserData();
+    updateUI();
+    localStorage.removeItem(TIMER_DATA_KEY);
+}
+
+function showCompletionNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification show';
+    notification.innerHTML = `
+        <div class="notification-title">
+            <i class="fas fa-check-circle"></i>
+            ${message}
+        </div>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 5000);
 }
 
 function updateTimerDisplay() {
@@ -2081,6 +2107,58 @@ function createConfetti() {
             confetti.remove();
         }, 3000);
     }
+}
+
+// Show completion notification
+function showCompletionNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification show';
+    notification.innerHTML = `
+        <div class="notification-title">
+            <i class="fas fa-check-circle"></i>
+            ${message}
+        </div>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 5000);
+}
+
+// Update timer display
+function updateTimerDisplay() {
+    const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+    const seconds = (timeLeft % 60).toString().padStart(2, '0');
+    document.getElementById('timer-display').textContent = `${minutes}:${seconds}`;
+}
+
+// Update session type display
+function updateSessionTypeDisplay() {
+    sessionTypeEl.textContent = isWorkSession ? 'Focus Session' : 'Break Time';
+    sessionTypeEl.style.color = isWorkSession ? 'var(--moon-purple)' : 'var(--celestial-blue)';
+}
+
+// Update study time
+function updateStudyTime() {
+    const hours = Math.floor(totalStudySeconds / 3600);
+    const minutes = Math.floor((totalStudySeconds % 3600) / 60);
+    totalHoursDisplay.textContent = `${hours}h ${minutes}m`;
+}
+
+// Persistent timer functions
+function showPersistentTimer() {
+    persistentTimer.style.display = 'flex';
+    updatePersistentTimer();
+}
+
+function hidePersistentTimer() {
+    persistentTimer.style.display = 'none';
+}
+
+function updatePersistentTimer() {
+    if (!isRunning) return;
+    
+    const minutes = Math.floor(timeLeft / 60);
+    persistentTimer.textContent = minutes;
+    persistentTimer.title = `${minutes}m ${timeLeft % 60}s remaining`;
 }
 
 // Show energy notification
@@ -2169,7 +2247,6 @@ function setupEventListeners() {
         }
     });
 
-    // Persistent timer click event
     persistentTimer.addEventListener('click', () => {
         window.scrollTo({
             top: 0,
@@ -2177,24 +2254,8 @@ function setupEventListeners() {
         });
     });
 
-    // Save timer data when page is about to unload
     window.addEventListener('beforeunload', () => {
-        saveTimerData();
-    });
-}
-
-function updateRankList() {
-    const rankList = document.getElementById('rank-list');
-    rankList.innerHTML = '';
-    
-    cultivationRanks.forEach((rank, index) => {
-        const rankItem = document.createElement('li');
-        rankItem.className = `rank-item ${index === currentRankIndex ? 'current' : ''}`;
-        rankItem.innerHTML = `
-            <i class="fas fa-${rank.icon}"></i>
-            ${rank.name} (${rank.threshold}+)
-        `;
-        rankList.appendChild(rankItem);
+        saveTimerState();
     });
 }
 
